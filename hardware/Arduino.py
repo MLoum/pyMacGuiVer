@@ -14,7 +14,7 @@ class Arduino(Device):
     def loadDevice(self, params=None):
         #self.detectSerialPort(idString)
         self.comPortInfo =["", "", ""]
-        self.comPortInfo[0] = "COM3"
+        self.comPortInfo[0] = "COM4"
         if self.comPortInfo  != None:
             self.serialPort.port = self.comPortInfo[0]
             try:
@@ -28,14 +28,14 @@ class Arduino(Device):
         else:
             return  False
 
-    def sendCommand(self, command):
+    def send_command(self, command):
         try:
             self.serialPort.write(command)
         except serial.portNotOpenError:
             print("Port non ouvert !")
 
 
-    def readResult(self):
+    def read_result(self):
         msg = "timeout"
         msg = self.serialPort.readline()
         return msg
@@ -43,18 +43,18 @@ class Arduino(Device):
     def pollArduino(self):
         pass
 
-    def detectSerialPort(self, answerToDetect):
+    def detect_serial_port(self, answerToDetect):
         self.comPortInfo =  None
         listSerialPort = comports()
         for port in listSerialPort:
            self.serialPort = serial.Serial(port=port[0], baudrate=57600, parity=serial.PARITY_NONE,
                                             stopbits=serial.STOPBITS_ONE, timeout=0.5, rtscts=False)
-           self.sendCommand("?/")
+           self.send_command("?/")
            response = self.pollArduino()
            if response == answerToDetect:
                return
 
-    def detectSerialCOMPort_viaSerialNumber(self, serialNumber):
+    def detect_serial_COM_port_via_serial_number(self, serialNumber):
         self.comPortInfo =  None
         listSerialPort = comports()
         for port in listSerialPort:

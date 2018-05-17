@@ -189,7 +189,6 @@ class MidiTkControl():
                 if self.callBack is not None:
                     self.callBack[0]()
 
-
             elif self.midiValue == 127:
                 if self.tkVariable is not None:
                     self.tkVariable.set(str(self.getValue(incIsPositive=False)))

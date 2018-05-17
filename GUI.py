@@ -11,7 +11,7 @@ class macGuiver():
         self.launch_MicroManager()
         self.createHardware()
 
-        self.createMidiControl()
+        # self.createMidiControl()
 
         self.createGUI()
         #self.midiListener.startListening()
@@ -30,20 +30,20 @@ class macGuiver():
         print(self.mmc.getAPIVersionInfo())
 
     def createHardware(self):
-        self.dummy_XYStage = dummy_XYStage.dummy_XY(self)
+        # self.dummy_XYStage = dummy_XYStage.dummy_XY(self)
 
 
-        # self.madLibCity_XY  = MCL_XY.madLibCity_XY(self)
-        # self.listHardware.append(self.madLibCity_XY)
+        self.madLibCity_XY  = MCL_XY.madLibCity_XY(self)
+        self.listHardware.append(self.madLibCity_XY)
         # self.standa_XY  = Standa_XY.Standa_XY(self)
         # self.listHardware.append(self.standa_XY)
 
         # self.spectro = Spectro.Spectro(self)
         # self.listHardware.append(self.spectro)
         #
-        # self.countingArduino = ArduinoCounting.ArduinoCouting(self)
-        # if self.countingArduino.initialized:
-        #     self.listHardware.append(self.countingArduino)
+        self.countingArduino = ArduinoCounting.ArduinoCouting(self)
+        if self.countingArduino.initialized:
+            self.listHardware.append(self.countingArduino)
 
 
     def createMidiControl(self):
@@ -52,15 +52,15 @@ class macGuiver():
         self.midiListener.createGUI()
 
     def createGUI(self):
-        self.dummy_XYStage.frame.pack()
-        # self.madLibCity_XY.frame.pack()
+        # self.dummy_XYStage.frame.pack()
+        self.madLibCity_XY.frame.pack()
         # self.standa_XY.frame.pack()
-        # if self.countingArduino.initialized:
-        #     self.countingArduino.frame.pack()
+        if self.countingArduino.initialized:
+            self.countingArduino.frame.pack()
         # self.spectro.createGUI()
         # self.spectro.frame.pack()
 
-        self.midiListener.frame.pack()
+        # self.midiListener.frame.pack()
 
     def registerMidiCallback(self):
         self.midiListener.registerCallback(type="relative", name="MCL_X", midiCC=32, callBack=[self.dummy_XYStage.moveLeft, self.dummy_XYStage.moveRight])
@@ -82,3 +82,8 @@ class macGuiver():
         # paramFile.write(self.saveDir)
         self.root.destroy()
         self.root.quit()
+
+
+if __name__ == "__main__":
+    macGuiver = macGuiver()
+    macGuiver.run()

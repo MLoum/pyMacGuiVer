@@ -1245,6 +1245,478 @@ class LongVector(_object):
 LongVector_swigregister = _MMCorePy.LongVector_swigregister
 LongVector_swigregister(LongVector)
 
+class DoubleVector(_object):
+    """Proxy of C++ std::vector<(double)> class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, DoubleVector, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, DoubleVector, name)
+    __repr__ = _swig_repr
+    def iterator(self):
+        """
+        iterator(self) -> SwigPyIterator
+        Parameters:
+           self: std::vector< double > * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_iterator(self)
+
+    def __iter__(self): return self.iterator()
+    def __nonzero__(self):
+        """
+        __nonzero__(self) -> bool
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector___nonzero__(self)
+
+    def __bool__(self):
+        """
+        __bool__(self) -> bool
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector___bool__(self)
+
+    def __len__(self):
+        """
+        __len__(self) -> size_type
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector___len__(self)
+
+    def pop(self):
+        """
+        pop(self) -> value_type
+        Parameters:
+           self: std::vector< double > * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_pop(self)
+
+    def __getslice__(self, *args):
+        """
+        __getslice__(self, difference_type i, difference_type j) -> DoubleVector
+        Parameters:
+           self: std::vector< double > * value
+           i: std::vector< double >::difference_type value
+           j: std::vector< double >::difference_type value
+
+           i: std::vector< double >::difference_type value
+           j: std::vector< double >::difference_type value
+
+        """
+        return _MMCorePy.DoubleVector___getslice__(self, *args)
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(self, difference_type i, difference_type j, DoubleVector v)
+        Parameters:
+           self: std::vector< double > * value
+           i: std::vector< double >::difference_type value
+           j: std::vector< double >::difference_type value
+           v: std::vector< double,std::allocator< double > > const & value
+
+           i: std::vector< double >::difference_type value
+           j: std::vector< double >::difference_type value
+           v: std::vector< double,std::allocator< double > > const & value
+
+        """
+        return _MMCorePy.DoubleVector___setslice__(self, *args)
+
+    def __delslice__(self, *args):
+        """
+        __delslice__(self, difference_type i, difference_type j)
+        Parameters:
+           self: std::vector< double > * value
+           i: std::vector< double >::difference_type value
+           j: std::vector< double >::difference_type value
+
+           i: std::vector< double >::difference_type value
+           j: std::vector< double >::difference_type value
+
+        """
+        return _MMCorePy.DoubleVector___delslice__(self, *args)
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(self, difference_type i)
+        Parameters:
+           i: std::vector< double >::difference_type value
+
+           i: std::vector< double >::difference_type value
+
+        __delitem__(self, PySliceObject slice)
+        Parameters:
+           self: std::vector< double > * value
+           slice: PySliceObject * value
+
+           slice: PySliceObject * value
+
+        """
+        return _MMCorePy.DoubleVector___delitem__(self, *args)
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(self, PySliceObject slice) -> DoubleVector
+        Parameters:
+           slice: PySliceObject * value
+
+           slice: PySliceObject * value
+
+        __getitem__(self, difference_type i) -> value_type
+        Parameters:
+           self: std::vector< double > const * value
+           i: std::vector< double >::difference_type value
+
+           i: std::vector< double >::difference_type value
+
+        """
+        return _MMCorePy.DoubleVector___getitem__(self, *args)
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(self, PySliceObject slice, DoubleVector v)
+        Parameters:
+           slice: PySliceObject * value
+           v: std::vector< double,std::allocator< double > > const & value
+
+           slice: PySliceObject * value
+           v: std::vector< double,std::allocator< double > > const & value
+
+        __setitem__(self, difference_type i, value_type x)
+        Parameters:
+           self: std::vector< double > * value
+           i: std::vector< double >::difference_type value
+           x: std::vector< double >::value_type const & value
+
+           i: std::vector< double >::difference_type value
+           x: std::vector< double >::value_type const & value
+
+        """
+        return _MMCorePy.DoubleVector___setitem__(self, *args)
+
+    def append(self, *args):
+        """
+        append(self, value_type x)
+        Parameters:
+           self: std::vector< double > * value
+           x: std::vector< double >::value_type const & value
+
+           x: std::vector< double >::value_type const & value
+
+        """
+        return _MMCorePy.DoubleVector_append(self, *args)
+
+    def empty(self):
+        """
+        empty(self) -> bool
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_empty(self)
+
+    def size(self):
+        """
+        size(self) -> size_type
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_size(self)
+
+    def clear(self):
+        """
+        clear(self)
+        Parameters:
+           self: std::vector< double > * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_clear(self)
+
+    def swap(self, *args):
+        """
+        swap(self, DoubleVector v)
+        Parameters:
+           self: std::vector< double > * value
+           v: std::vector< double > & value
+
+           v: std::vector< double > & value
+
+        """
+        return _MMCorePy.DoubleVector_swap(self, *args)
+
+    def get_allocator(self):
+        """
+        get_allocator(self) -> allocator_type
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_get_allocator(self)
+
+    def begin(self):
+        """
+        begin(self) -> const_iterator
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_begin(self)
+
+    def end(self):
+        """
+        end(self) -> const_iterator
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_end(self)
+
+    def rbegin(self):
+        """
+        rbegin(self) -> const_reverse_iterator
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_rbegin(self)
+
+    def rend(self):
+        """
+        rend(self) -> const_reverse_iterator
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_rend(self)
+
+    def pop_back(self):
+        """
+        pop_back(self)
+        Parameters:
+           self: std::vector< double > * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_pop_back(self)
+
+    def erase(self, *args):
+        """
+        erase(self, iterator pos) -> iterator
+        Parameters:
+           pos: std::vector< double >::iterator value
+
+           pos: std::vector< double >::iterator value
+
+        erase(self, iterator first, iterator last) -> iterator
+        Parameters:
+           self: std::vector< double > * value
+           first: std::vector< double >::iterator value
+           last: std::vector< double >::iterator value
+
+           first: std::vector< double >::iterator value
+           last: std::vector< double >::iterator value
+
+        """
+        return _MMCorePy.DoubleVector_erase(self, *args)
+
+    def __init__(self, *args): 
+        """
+        __init__(self) -> DoubleVector
+        __init__(self, DoubleVector arg0) -> DoubleVector
+        Parameters:
+           : std::vector< double > const & value
+
+           : std::vector< double > const & value
+
+        __init__(self, size_type size) -> DoubleVector
+        Parameters:
+           size: std::vector< double >::size_type value
+
+           size: std::vector< double >::size_type value
+
+        __init__(self, size_type size, value_type value) -> DoubleVector
+        Parameters:
+           size: std::vector< double >::size_type value
+           value: std::vector< double >::value_type const & value
+
+           size: std::vector< double >::size_type value
+           value: std::vector< double >::value_type const & value
+
+        """
+        this = _MMCorePy.new_DoubleVector(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def push_back(self, *args):
+        """
+        push_back(self, value_type x)
+        Parameters:
+           self: std::vector< double > * value
+           x: std::vector< double >::value_type const & value
+
+           x: std::vector< double >::value_type const & value
+
+        """
+        return _MMCorePy.DoubleVector_push_back(self, *args)
+
+    def front(self):
+        """
+        front(self) -> value_type
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_front(self)
+
+    def back(self):
+        """
+        back(self) -> value_type
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_back(self)
+
+    def assign(self, *args):
+        """
+        assign(self, size_type n, value_type x)
+        Parameters:
+           self: std::vector< double > * value
+           n: std::vector< double >::size_type value
+           x: std::vector< double >::value_type const & value
+
+           n: std::vector< double >::size_type value
+           x: std::vector< double >::value_type const & value
+
+        """
+        return _MMCorePy.DoubleVector_assign(self, *args)
+
+    def resize(self, *args):
+        """
+        resize(self, size_type new_size)
+        Parameters:
+           new_size: std::vector< double >::size_type value
+
+           new_size: std::vector< double >::size_type value
+
+        resize(self, size_type new_size, value_type x)
+        Parameters:
+           self: std::vector< double > * value
+           new_size: std::vector< double >::size_type value
+           x: std::vector< double >::value_type const & value
+
+           new_size: std::vector< double >::size_type value
+           x: std::vector< double >::value_type const & value
+
+        """
+        return _MMCorePy.DoubleVector_resize(self, *args)
+
+    def insert(self, *args):
+        """
+        insert(self, iterator pos, value_type x) -> iterator
+        Parameters:
+           pos: std::vector< double >::iterator value
+           x: std::vector< double >::value_type const & value
+
+           pos: std::vector< double >::iterator value
+           x: std::vector< double >::value_type const & value
+
+        insert(self, iterator pos, size_type n, value_type x)
+        Parameters:
+           self: std::vector< double > * value
+           pos: std::vector< double >::iterator value
+           n: std::vector< double >::size_type value
+           x: std::vector< double >::value_type const & value
+
+           pos: std::vector< double >::iterator value
+           n: std::vector< double >::size_type value
+           x: std::vector< double >::value_type const & value
+
+        """
+        return _MMCorePy.DoubleVector_insert(self, *args)
+
+    def reserve(self, *args):
+        """
+        reserve(self, size_type n)
+        Parameters:
+           self: std::vector< double > * value
+           n: std::vector< double >::size_type value
+
+           n: std::vector< double >::size_type value
+
+        """
+        return _MMCorePy.DoubleVector_reserve(self, *args)
+
+    def capacity(self):
+        """
+        capacity(self) -> size_type
+        Parameters:
+           self: std::vector< double > const * value
+
+
+
+
+        """
+        return _MMCorePy.DoubleVector_capacity(self)
+
+    __swig_destroy__ = _MMCorePy.delete_DoubleVector
+    __del__ = lambda self : None;
+DoubleVector_swigregister = _MMCorePy.DoubleVector_swigregister
+DoubleVector_swigregister(DoubleVector)
+
 class StrVector(_object):
     """Proxy of C++ std::vector<(std::string)> class"""
     __swig_setmethods__ = {}
@@ -2500,6 +2972,7 @@ g_CFGCommand_Delay = cvar.g_CFGCommand_Delay
 g_CFGCommand_ImageSynchro = cvar.g_CFGCommand_ImageSynchro
 g_CFGCommand_ConfigPixelSize = cvar.g_CFGCommand_ConfigPixelSize
 g_CFGCommand_PixelSize_um = cvar.g_CFGCommand_PixelSize_um
+g_CFGCommand_PixelSizeAffine = cvar.g_CFGCommand_PixelSizeAffine
 g_CFGCommand_ParentID = cvar.g_CFGCommand_ParentID
 g_CFGCommand_FocusDirection = cvar.g_CFGCommand_FocusDirection
 g_CFGGroup_System = cvar.g_CFGGroup_System
@@ -4455,6 +4928,31 @@ class CMMCore(_object):
         """
         return _MMCorePy.CMMCore_getPixelSizeUmByID(self, *args)
 
+    def getPixelSizeAffine(self, *args):
+        """
+        getPixelSizeAffine(self) -> DoubleVector
+        getPixelSizeAffine(self, bool cached) -> DoubleVector
+        Parameters:
+           self: CMMCore * value
+           cached: bool value
+
+           cached: bool value
+
+        """
+        return _MMCorePy.CMMCore_getPixelSizeAffine(self, *args)
+
+    def getPixelSizeAffineByID(self, *args):
+        """
+        getPixelSizeAffineByID(self, char resolutionID) -> DoubleVector
+        Parameters:
+           self: CMMCore * value
+           resolutionID: char const * value
+
+           resolutionID: char const * value
+
+        """
+        return _MMCorePy.CMMCore_getPixelSizeAffineByID(self, *args)
+
     def getMagnificationFactor(self):
         """
         getMagnificationFactor(self) -> double
@@ -4480,6 +4978,20 @@ class CMMCore(_object):
 
         """
         return _MMCorePy.CMMCore_setPixelSizeUm(self, *args)
+
+    def setPixelSizeAffine(self, *args):
+        """
+        setPixelSizeAffine(self, char resolutionID, DoubleVector affine)
+        Parameters:
+           self: CMMCore * value
+           resolutionID: char const * value
+           affine: std::vector< double,std::allocator< double > > value
+
+           resolutionID: char const * value
+           affine: std::vector< double,std::allocator< double > > value
+
+        """
+        return _MMCorePy.CMMCore_setPixelSizeAffine(self, *args)
 
     def definePixelSizeConfig(self, *args):
         """
@@ -4624,12 +5136,26 @@ class CMMCore(_object):
         """
         setROI(self, int x, int y, int xSize, int ySize)
         Parameters:
-           self: CMMCore * value
            x: int value
            y: int value
            xSize: int value
            ySize: int value
 
+           x: int value
+           y: int value
+           xSize: int value
+           ySize: int value
+
+        setROI(self, char label, int x, int y, int xSize, int ySize)
+        Parameters:
+           self: CMMCore * value
+           label: char const * value
+           x: int value
+           y: int value
+           xSize: int value
+           ySize: int value
+
+           label: char const * value
            x: int value
            y: int value
            xSize: int value
@@ -5283,7 +5809,7 @@ class CMMCore(_object):
 
     def loadExposureSequence(self, *args):
         """
-        loadExposureSequence(self, char cameraLabel, std::vector<(double,std::allocator<(double)>)> exposureSequence_ms)
+        loadExposureSequence(self, char cameraLabel, DoubleVector exposureSequence_ms)
         Parameters:
            self: CMMCore * value
            cameraLabel: char const * value
@@ -5715,7 +6241,7 @@ class CMMCore(_object):
 
     def loadStageSequence(self, *args):
         """
-        loadStageSequence(self, char stageLabel, std::vector<(double,std::allocator<(double)>)> positionSequence)
+        loadStageSequence(self, char stageLabel, DoubleVector positionSequence)
         Parameters:
            self: CMMCore * value
            stageLabel: char const * value
@@ -5777,24 +6303,16 @@ class CMMCore(_object):
 
     def getXYPosition(self, *args):
         """
-        getXYPosition(self, char xyStageLabel, double x_stage, double y_stage)
+        getXYPosition(self, char xyStageLabel)
         Parameters:
            xyStageLabel: char const * value
-           x_stage: double & value
-           y_stage: double & value
 
            xyStageLabel: char const * value
-           x_stage: double & value
-           y_stage: double & value
 
-        getXYPosition(self, double x_stage, double y_stage)
+        getXYPosition(self)
         Parameters:
            self: CMMCore * value
-           x_stage: double & value
-           y_stage: double & value
 
-           x_stage: double & value
-           y_stage: double & value
 
         """
         return _MMCorePy.CMMCore_getXYPosition(self, *args)
@@ -5977,8 +6495,7 @@ class CMMCore(_object):
 
     def loadXYStageSequence(self, *args):
         """
-        loadXYStageSequence(self, char xyStageLabel, std::vector<(double,std::allocator<(double)>)> xSequence, 
-            std::vector<(double,std::allocator<(double)>)> ySequence)
+        loadXYStageSequence(self, char xyStageLabel, DoubleVector xSequence, DoubleVector ySequence)
         Parameters:
            self: CMMCore * value
            xyStageLabel: char const * value
@@ -6073,28 +6590,6 @@ class CMMCore(_object):
 
         """
         return _MMCorePy.CMMCore_readFromSerialPort(self, *args)
-
-    def setSLMImage(self, *args):
-        """
-        setSLMImage(self, char slmLabel, unsigned char pixels)
-        Parameters:
-           slmLabel: char const * value
-           pixels: unsigned char * value
-
-           slmLabel: char const * value
-           pixels: unsigned char * value
-
-        setSLMImage(self, char slmLabel, imgRGB32 pixels)
-        Parameters:
-           self: CMMCore * value
-           slmLabel: char const * value
-           pixels: imgRGB32 value
-
-           slmLabel: char const * value
-           pixels: imgRGB32 value
-
-        """
-        return _MMCorePy.CMMCore_setSLMImage(self, *args)
 
     def setSLMPixelsTo(self, *args):
         """
@@ -6309,16 +6804,12 @@ class CMMCore(_object):
 
     def getGalvoPosition(self, *args):
         """
-        getGalvoPosition(self, char galvoLabel, double x_stage, double y_stage)
+        getGalvoPosition(self, char galvoLabel)
         Parameters:
            self: CMMCore * value
            galvoLabel: char const * value
-           x_stage: double & value
-           y_stage: double & value
 
            galvoLabel: char const * value
-           x_stage: double & value
-           y_stage: double & value
 
         """
         return _MMCorePy.CMMCore_getGalvoPosition(self, *args)
@@ -6600,6 +7091,20 @@ class CMMCore(_object):
 
         """
         return _MMCorePy.CMMCore_getMACAddresses(self)
+
+    def setSLMImage(self, *args):
+        """
+        setSLMImage(self, char slmLabel, char pixels) -> PyObject
+        Parameters:
+           self: CMMCore * value
+           slmLabel: char const * value
+           pixels: char * value
+
+           slmLabel: char const * value
+           pixels: char * value
+
+        """
+        return _MMCorePy.CMMCore_setSLMImage(self, *args)
 
 CMMCore_swigregister = _MMCorePy.CMMCore_swigregister
 CMMCore_swigregister(CMMCore)

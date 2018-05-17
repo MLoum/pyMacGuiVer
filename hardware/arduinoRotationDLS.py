@@ -127,13 +127,13 @@ class ArduinoRotationDLS(Arduino):
             self.lbOnOff.configure(image=self.tkimageOff)
 
     def launchMonitor(self):
-        self.sendCommand("m/")
+        self.send_command("m/")
         self.isMonitor = True
         self.threadMonitor = threading.Thread(name='arduinoCountingMonitor', target=self.monitor)
         self.threadMonitor.start()
 
     def stopMonitor(self):
-        self.sendCommand("s/")
+        self.send_command("s/")
         if self.threadMonitor.is_alive():
             self.threadMonitor.join(timeout=0.5)
         self.isMonitor = False
@@ -174,7 +174,7 @@ class ArduinoRotationDLS(Arduino):
 
         cmd += intTimeMs
         cmd += "/"
-        self.sendCommand(cmd)
+        self.send_command(cmd)
 
 
     def addPointToHistory(self, point):

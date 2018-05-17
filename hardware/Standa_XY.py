@@ -21,7 +21,7 @@ class Standa_XY(XYStage):
         self.mmc.loadDevice(self.mm_name, "Standa8SMC4", "Standa8SMC4XY")
 
         self.mmc.setProperty(self.mm_name, "Port X", "xi-com:%5C%5C.%5CCOM6")
-        self.mmc.setProperty(self.mm_name, "Port Y", "xi-com:%5C%5C.%5CCOM9")
+        self.mmc.setProperty(self.mm_name, "Port Y", "xi-com:%5C%5C.%5CCOM7")
         self.mmc.setProperty(self.mm_name, "UnitMultiplierX", "0.054")
         self.mmc.setProperty(self.mm_name, "UnitMultiplierY", "0.054")
         self.mmc.initializeDevice(self.mm_name)
