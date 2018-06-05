@@ -10,8 +10,13 @@ class madLibCity_XY(XYStage):
         super(madLibCity_XY, self).__init__(macGuiver, frameName="MCL_XY", mm_name="MadLabXY")
 
     def loadDevice(self):
-        self.mmc.loadDevice(self.mm_name, "MCL_MicroDrive", "MicroDrive XY Stage")
-        self.mmc.initializeDevice(self.mm_name)
+        try:
+            self.mmc.loadDevice(self.mm_name, "MCL_MicroDrive", "MicroDrive XY Stage")
+            self.mmc.initializeDevice(self.mm_name)
+            return True
+        except:
+            print("MCL_XY ini pb")
+            return False
 
     def moveAbsolute(self, posMicron):
         self.mmc.setXYPosition(self.mm_name, self.posMicron[0], self.posMicron[1])

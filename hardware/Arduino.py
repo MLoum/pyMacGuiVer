@@ -10,6 +10,7 @@ class Arduino(Device):
         self.serialPort = serial.Serial(port=None, baudrate=57600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=0.5, rtscts=False)
         # self.threadPoll = threading.Thread(name='arduinoPoll', target=self.read_from_port)
         # self.threadPoll.setDaemon(True)
+        self.comPortInfo = ["", "", ""]
 
     def loadDevice(self, params=None):
         #self.detectSerialPort(idString)
@@ -23,10 +24,12 @@ class Arduino(Device):
                 #FIXME
                 print("Pas de port !")
                 return False
-
             return True
         else:
             return  False
+
+    def change_com_port(self, port):
+        self.comPortInfo[0] = port
 
     def send_command(self, command):
         try:

@@ -78,7 +78,7 @@ class XYStage(Device):
         self.posDict = {}
         self.listPosTreeView_iid = []
 
-        self.loadDevice()
+        self.initialized = self.loadDevice()
         self.createGUI()
         self.get_GUI_params()
 

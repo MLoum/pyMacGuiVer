@@ -27,6 +27,8 @@ class ArduinoCouting(Arduino):
         self.threadMonitor.setDaemon(True)
         self.isMonitor = False
 
+        # FIXME
+        self.change_com_port("COM4")
         self.initialized = self.loadDevice()
         if self.initialized == False:
             return
@@ -62,6 +64,7 @@ class ArduinoCouting(Arduino):
         label.grid(row=2, column=0)
         self.mean_sv = tk.StringVar()
         e = ttk.Entry(self.frame, textvariable=self.mean_sv, justify=tk.CENTER, width=7)
+        e.config(font=("Courier", 65))
         e.grid(row=2, column=1)
         self.mean_sv.set('0')
 
@@ -75,10 +78,10 @@ class ArduinoCouting(Arduino):
         self.frameHistory = tk.Frame(self.frame)
         self.frameHistory.grid(row=0, column=3, rowspan=3)
 
-        self.figure = plt.Figure(figsize=(12, 4), dpi=50)
+        self.figure = plt.Figure(figsize=(16, 6), dpi=60)
         self.ax = self.figure.add_subplot(111)
 
-        self.change_nb_of_point_in_history(100)
+        self.change_nb_of_point_in_history(150)
 
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.frameHistory)
         self.canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
@@ -98,8 +101,12 @@ class ArduinoCouting(Arduino):
 
         self.current_value_sv = tk.StringVar()
         label = ttk.Label(self.frame, textvariable=self.current_value_sv, justify=tk.CENTER, width=7)
-        label.config(font=("Courier", 44))
+        label.config(font=("Courier", 65))
         label.grid(row=1, column=5)
+
+
+        b = tk.Button(self.frame, text="clear", command=self.clear_history)
+        b.grid(row=0, column = 5)
 
 
         # self.figure.canvas.mpl_connect('scroll_event', self.graphScrollEvent)
@@ -198,6 +205,11 @@ class ArduinoCouting(Arduino):
         self.ax.set_xlim(0, self.nb_of_point_in_history)
         self.ax.plot(self.history_x[0:self.idx_history], self.history[0:self.idx_history], "ro")
         self.canvas.draw()
+
+    def clear_history(self):
+        self.history[:] = 0
+        self.idx_history = 0
+
 
 
 

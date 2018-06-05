@@ -1,5 +1,5 @@
 import Tkinter as tk
-from hardware import MCL_XY, Standa_XY, ArduinoCounting, Spectro, dummy_XYStage
+from hardware import MCL_XY, Standa_XY, ArduinoCounting, Spectro, dummy_XYStage, motorArduino
 from Control import midiControl
 import MMCorePy
 
@@ -9,11 +9,13 @@ class macGuiver():
         self.mmc = None
         self.listHardware = []
         self.launch_MicroManager()
+        self.start_splash_screen()
         self.createHardware()
 
         # self.createMidiControl()
 
         self.createGUI()
+        self.close_splash_screen()
         #self.midiListener.startListening()
         #self.createMenuCommands()
         #self.createShortCut()
@@ -25,25 +27,43 @@ class macGuiver():
         self.root.mainloop()
 
     def launch_MicroManager(self):
-        self.mmc =  MMCorePy.CMMCore()
-        print(self.mmc.getVersionInfo())
-        print(self.mmc.getAPIVersionInfo())
+        try:
+            self.mmc = MMCorePy.CMMCore()
+            print(self.mmc.getVersionInfo())
+            print(self.mmc.getAPIVersionInfo())
+        except:
+            print("Can't launch micro-manager core.\n Exiting.")
+            return
+
+    def start_splash_screen(self):
+        pass
+
+    def close_splash_screen(self):
+        pass
 
     def createHardware(self):
         # self.dummy_XYStage = dummy_XYStage.dummy_XY(self)
 
-
         self.madLibCity_XY  = MCL_XY.madLibCity_XY(self)
-        self.listHardware.append(self.madLibCity_XY)
+        if self.madLibCity_XY.initialized:
+            self.listHardware.append(self.madLibCity_XY)
+
+
         # self.standa_XY  = Standa_XY.Standa_XY(self)
         # self.listHardware.append(self.standa_XY)
 
         # self.spectro = Spectro.Spectro(self)
         # self.listHardware.append(self.spectro)
         #
+
         self.countingArduino = ArduinoCounting.ArduinoCouting(self)
         if self.countingArduino.initialized:
             self.listHardware.append(self.countingArduino)
+            # TODO print info to splash screen
+
+        # self.rotation_arduino_dls = motorArduino.Motor_arduino(self)
+        # if self.rotation_arduino_dls.initialized:
+        #     self.listHardware.append(self.rotation_arduino_dls)
 
 
     def createMidiControl(self):
@@ -52,12 +72,15 @@ class macGuiver():
         self.midiListener.createGUI()
 
     def createGUI(self):
+        for device in self.listHardware:
+            device.frame.pack()
+
         # self.dummy_XYStage.frame.pack()
-        self.madLibCity_XY.frame.pack()
-        # self.standa_XY.frame.pack()
-        if self.countingArduino.initialized:
-            self.countingArduino.frame.pack()
-        # self.spectro.createGUI()
+        # self.madLibCity_XY.frame.pack()
+        # # self.standa_XY.frame.pack()
+        # if self.countingArduino.initialized:
+        #     self.countingArduino.frame.pack()
+        # # self.spectro.createGUI()
         # self.spectro.frame.pack()
 
         # self.midiListener.frame.pack()
