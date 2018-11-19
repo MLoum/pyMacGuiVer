@@ -66,9 +66,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
 class XYStage(Device):
-    def __init__(self, macGuiver, frameName="XY_Stage", mm_name=""):
+    def __init__(self, mac_guiver, frameName="XY_Stage", mm_name=""):
         self.frameName = frameName
-        super(XYStage, self).__init__(macGuiver, frameName=self.frameName, mm_name=mm_name)
+        super(XYStage, self).__init__(mac_guiver, frameName=self.frameName, mm_name=mm_name)
 
         self.posMicron = [0, 0]
         self.speed = [None, None]
@@ -78,39 +78,41 @@ class XYStage(Device):
         self.posDict = {}
         self.listPosTreeView_iid = []
 
-        self.initialized = self.loadDevice()
-        self.createGUI()
-        self.get_GUI_params()
+        self.initialized = self.load_device()
+        if self.initialized:
+            self.create_GUI()
+            self.get_GUI_params()
 
-    def loadDevice(self, params=None):
-        self.mmc.loadDevice("cam", "DemoCamera", "DCam")
-        self.mmc.initializeDevice("cam")
+    def load_device(self, params=None):
+        pass
+        # self.mmc.load_device("cam", "DemoCamera", "DCam")
+        # self.mmc.initializeDevice("cam")
 
-    def createGUI(self):
+    def create_GUI(self):
         self.frame = tk.LabelFrame(self.master, text=self.frameName,
                                          borderwidth=1)
 
         img = Image.open("./Ressource/flecheUp.png")
         self.tkimageUpArrow = ImageTk.PhotoImage(img)
-        b = tk.Button(self.frame, image=self.tkimageUpArrow, command=self.moveUp)
+        b = tk.Button(self.frame, image=self.tkimageUpArrow, command=self.move_up)
         b.config(width="40", height="40")
         b.grid(row=0, column = 0)
 
         img = Image.open("./Ressource/flecheBas.png")
         self.tkimageDownArrow = ImageTk.PhotoImage(img)
-        b = tk.Button(self.frame, image=self.tkimageDownArrow, command=self.moveDown)
+        b = tk.Button(self.frame, image=self.tkimageDownArrow, command=self.move_down)
         b.config(width="40", height="40")
         b.grid(row=1, column = 0)
 
         img = Image.open("./Ressource/flecheLeft.png")
         self.tkimageLeftArrow = ImageTk.PhotoImage(img)
-        b = tk.Button(self.frame, image=self.tkimageLeftArrow, command=self.moveLeft)
+        b = tk.Button(self.frame, image=self.tkimageLeftArrow, command=self.move_left)
         b.config(width="40", height="40")
         b.grid(row=0, column = 1)
 
         img = Image.open("./Ressource/flecheRight.png")
         self.tkimageRightArrow = ImageTk.PhotoImage(img)
-        b = tk.Button(self.frame, image=self.tkimageRightArrow , command=self.moveRight)
+        b = tk.Button(self.frame, image=self.tkimageRightArrow, command=self.move_right)
         b.config(width="40", height="40")
         b.grid(row=1, column = 1)
 
@@ -182,7 +184,7 @@ class XYStage(Device):
         # self.figure.canvas.mpl_connect('button_release_event', self.button_release_event)
         # self.figure.canvas.mpl_connect('motion_notify_event', self.motion_notify_event)
 
-        self.plotPositionOnGraph()
+        self.plot_position_on_graph()
 
         #cursor =
         self.posTreeView= ttk.Treeview(self.frame, height=7, columns=('PosX', 'PosY'), selectmode="browse")
@@ -197,7 +199,7 @@ class XYStage(Device):
         self.frameToolButtonPos=tk.Frame(self.frame)
         self.frameToolButtonPos.grid(row=2, column=7, rowspan=3)
 
-        b = tk.Button(self.frameToolButtonPos, text="+", command=self.addPos)
+        b = tk.Button(self.frameToolButtonPos, text="+", command=self.add_pos)
         b.grid(row=0, column = 0)
         b = tk.Button(self.frameToolButtonPos, text="-", command=self.removePos)
         b.grid(row=0, column = 1)
@@ -206,7 +208,7 @@ class XYStage(Device):
         b = tk.Button(self.frameToolButtonPos, text="SetHome", command=self.setHome)
         b.grid(row=0, column = 2)
 
-        self.posTreeView.tag_bind('ttk', '<1>', self.posSelected)
+        self.posTreeView.tag_bind('ttk', '<1>', self.pos_Selected)
 
         # self.insertLineInPosTreeView("t1", 0, 82)
         # self.insertLineInPosTreeView("t2", 1, 81)
@@ -214,13 +216,13 @@ class XYStage(Device):
         #.identify_row(y)
         #.insert(parent, index, iid=None, **kw)
 
-    def posSelected(self):
+    def pos_Selected(self):
         pass
 
-    def insertLineInPosTreeView(self, label, posX, posY):
+    def insert_line_in_pos_TreeView(self, label, posX, posY):
         iid = self.posTreeView.insert(parent="", index='end', text=label, value=(str(posX), str(posY)))
         self.posDict[iid] = [label, posX, posY]
-    def addPos(self):
+    def add_pos(self):
 
         d = addListPointDialog(self.master, title="New Position", pos=self.pos)
         if d.result != None:
@@ -246,35 +248,35 @@ class XYStage(Device):
             self.graphPositionExtension_micron /= 2
         elif event.button == 'down':
             self.graphPositionExtension_micron *= 2
-        self.plotPositionOnGraph()
+        self.plot_position_on_graph()
 
 
     def graph_button_press_event(self, event):
         if event.dblclick:
-            self.launchMove(mode="absolute", posMicron=[event.xdata, event.ydata])
+            self.launch_move(mode="absolute", posMicron=[event.xdata, event.ydata])
 
-    def moveAbsolute(self, posMicron):
+    def move_absolute(self, pos_micron):
         pass
 
-    def moveRelative(self, posMicron):
+    def move_relative(self, pos_micron):
         pass
 
-    def waitForDevice(self):
+    def wait_for_device(self):
         pass
 
-    def moveUp(self):
-        self.launchMove(mode="relative", posMicron=[0, self.step[1]])
-    def moveDown(self):
-        self.launchMove(mode="relative", posMicron=[0, -self.step[1]])
-    def moveLeft(self):
-        self.launchMove(mode="relative", posMicron=[-self.step[0], 0])
-    def moveRight(self):
-        self.launchMove(mode="relative", posMicron=[self.step[1], 0])
+    def move_up(self):
+        self.launch_move(mode="relative", posMicron=[0, self.step[1]])
+    def move_down(self):
+        self.launch_move(mode="relative", posMicron=[0, -self.step[1]])
+    def move_left(self):
+        self.launch_move(mode="relative", posMicron=[-self.step[0], 0])
+    def move_right(self):
+        self.launch_move(mode="relative", posMicron=[self.step[1], 0])
 
-    def getPosition(self):
+    def get_position(self):
         pass
 
-    def plotPositionOnGraph(self):
+    def plot_position_on_graph(self):
         self.ax.clear()
         self.ax.set_xlim(-self.graphPositionExtension_micron, self.graphPositionExtension_micron)
         self.ax.set_ylim(-self.graphPositionExtension_micron, self.graphPositionExtension_micron)
@@ -282,14 +284,14 @@ class XYStage(Device):
         self.ax.scatter(self.posMicron[0], self.posMicron[1])
         self.canvas.draw()
 
-    def launchMove(self, mode, posMicron):
+    def launch_move(self, mode, posMicron):
         """
         THREAD !!
         """
-        self.moveThread = threading.Thread(name='XY_stage', target=self.move, args=(mode,posMicron))
+        self.moveThread = threading.Thread(name='XY_stage', target=self.move, args=(mode, posMicron))
         self.moveThread.start()
 
-    def isBusy(self):
+    def is_busy(self):
         return False
 
     def blinkLED_ignored(self):
@@ -297,34 +299,33 @@ class XYStage(Device):
         time.sleep(0.2)
         self.labelLED_ignored.configure(image=self.tkimageLEDRedOff)
 
-
     def move(self, mode, posMicron):
         #FIXME
         # self.get_GUI_params()
 
-        if self.isBusy():
+        if self.is_busy():
             #ignore command
             threading.Thread(target=self.blinkLED_ignored).start()
             return
 
         if mode == "absolute":
             self.posMicron = posMicron
-            self.moveAbsolute(posMicron)
+            self.move_absolute(posMicron)
 
         elif mode == "relative":
-            self.moveRelative(posMicron)
+            self.move_relative(posMicron)
             self.posMicron[0] += posMicron[0]
             self.posMicron[1] += posMicron[1]
 
         self.labelLEDMoving.configure(image=self.tkimageLEDGreenOn)
-        self.waitForDevice()
+        self.wait_for_device()
         self.labelLEDMoving.configure(image=self.tkimageLEDGreenOff)
 
-        self.plotPositionOnGraph()
+        self.plot_position_on_graph()
 
     def stop(self):
         pass
-        self.mmc.stop(self.mm_name)
+        # self.mmc.stop(self.mm_name)
 
     # def addPositionList(self, pos="current", label=):
     #     if pos == "current":

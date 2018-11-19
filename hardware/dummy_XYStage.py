@@ -6,26 +6,25 @@ import time
 from XYStage import XYStage
 
 class dummy_XY(XYStage):
-    def __init__(self, macGuiver):
-        self.isBusy_ = False
-        super(dummy_XY, self).__init__(macGuiver, frameName="Dummy_XY", mm_name="")
+    def __init__(self, mac_guiver):
+        super(dummy_XY, self).__init__(mac_guiver, frameName="Dummy_XY", mm_name="")
 
-    def loadDevice(self):
+    def load_device(self):
         return True
 
-    def moveAbsolute(self, posMicron):
+    def move_absolute(self, pos_micron):
         pass
 
-    def moveRelative(self, posMicron):
+    def move_relative(self, pos_micron):
         pass
 
-    def waitForDevice(self):
-        self.isBusy_ = True
+    def wait_for_device(self):
+        self.is_busy = True
         time.sleep(1)
-        self.isBusy_ = False
+        self.is_busy = False
 
     def stop(self):
         pass
 
-    def isBusy(self):
-        return self.isBusy_
+    def is_busy(self):
+        return self.is_busy

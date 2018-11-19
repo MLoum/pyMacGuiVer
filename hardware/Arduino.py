@@ -4,29 +4,29 @@ import threading
 from serial.tools.list_ports import comports
 
 class Arduino(Device):
-    def __init__(self, macGuiver, frameName="Arduino", mm_name=""):
-        super(Arduino, self).__init__(macGuiver, frameName, mm_name)
+    def __init__(self, mac_guiver, frameName="Arduino", mm_name=""):
+        super(Arduino, self).__init__(mac_guiver, frameName, mm_name)
         self.comPortInfo = None
         self.serialPort = serial.Serial(port=None, baudrate=57600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=0.5, rtscts=False)
         # self.threadPoll = threading.Thread(name='arduinoPoll', target=self.read_from_port)
         # self.threadPoll.setDaemon(True)
         self.comPortInfo = ["", "", ""]
 
-    def loadDevice(self, params=None):
+    def load_device(self, params=None):
         #self.detectSerialPort(idString)
-        self.comPortInfo =["", "", ""]
-        self.comPortInfo[0] = "COM4"
+        # self.comPortInfo =["", "", ""]
+        # self.comPortInfo[0] = "COM4"
         if self.comPortInfo  != None:
             self.serialPort.port = self.comPortInfo[0]
             try:
                 self.serialPort.open()
             except serial.SerialException:
                 #FIXME
-                print("Pas de port !")
+                self.mac_guiver.write_to_splash_screen("Could not open the serial port", type="warn")
                 return False
             return True
         else:
-            return  False
+            return False
 
     def change_com_port(self, port):
         self.comPortInfo[0] = port

@@ -15,14 +15,14 @@ import threading
 
 
 class Spectro(Device):
-    def __init__(self, macGuiver, frameName="spectro", mm_name=""):
-        super(Spectro, self).__init__(macGuiver, frameName, mm_name)
+    def __init__(self, mac_guiver, frameName="spectro", mm_name=""):
+        super(Spectro, self).__init__(mac_guiver, frameName, mm_name)
         self.comPortInfo = "COM12"
         self.serialPort = serial.Serial(port="COM12", baudrate=9600, bytesize=8, parity=serial.PARITY_NONE,
                                         stopbits=serial.STOPBITS_ONE, timeout=0.5, rtscts=False)
         # print(self.serialPort)
 
-    def createGUI(self):
+    def create_GUI(self):
         self.frame = tk.LabelFrame(self.master, text=self.frameName,
                                    borderwidth=1)
 
@@ -82,5 +82,5 @@ class Spectro(Device):
     #     e=ttk.Entry(calFen, textvariable=self.offset, justify=tk.CENTER, width=7)
     #     e.grid(row=0, column=0, columnspan=2)
 
-    def loadDevice(self, params=None):
+    def load_device(self, params=None):
         pass

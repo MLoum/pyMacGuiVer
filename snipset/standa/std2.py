@@ -22,7 +22,7 @@ if sys.platform in ("win32", "win64"):
 try: 
     from pyximc import *
 except ImportError as err:
-    print ("Can't import pyximc module. The most probable reason is that you changed the relative location of the testpython.py and pyximc.py files. See developers' documentation for details.")
+    print ("Can't import pyximc module. The most probable reason is that you changed the relative location of the std2.py and pyximc.py files. See developers' documentation for details.")
     exit()
 except OSError as err:
     print ("Can't load libximc library. Please add all shared libraries to the appropriate places. It is decribed in detail in developers' documentation. On Linux make sure you installed libximc-dev package.\nmake sure that the architecture of the system and the interpreter is the same")

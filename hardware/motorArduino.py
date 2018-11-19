@@ -21,24 +21,24 @@ import numpy as np
 
 
 class Motor_arduino(Arduino):
-    def __init__(self, macGuiver, frameName="Arduino Counting", mm_name=""):
-        super(Motor_arduino, self).__init__(macGuiver, frameName="Motor - Arduino", mm_name="")
+    def __init__(self, mac_guiver, frameName="Arduino Counting", mm_name=""):
+        super(Motor_arduino, self).__init__(mac_guiver, frameName="Motor - Arduino", mm_name="")
         self.threadMonitor = threading.Thread(name='arduinoRotationDLS', target=self.monitor)
         self.threadMonitor.setDaemon(True)
         self.isMonitor = True
 
         # FIXME
         self.change_com_port("COM4")
-        self.initialized = self.loadDevice()
+        self.initialized = self.load_device()
         if self.initialized == False:
             return
 
-        self.createGUI()
+        self.create_GUI()
 
-    def loadDevice(self, params=None):
-        return super(Motor_arduino, self).loadDevice("rotation/\r\n")
+    def load_device(self, params=None):
+        return super(Motor_arduino, self).load_device("rotation/\r\n")
 
-    def createGUI(self):
+    def create_GUI(self):
         self.frame = tk.LabelFrame(self.master, text=self.frameName,
                                    borderwidth=1)
 

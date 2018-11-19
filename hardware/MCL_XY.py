@@ -5,27 +5,203 @@
 
 from XYStage import XYStage
 
-class madLibCity_XY(XYStage):
-    def __init__(self, macGuiver):
-        super(madLibCity_XY, self).__init__(macGuiver, frameName="MCL_XY", mm_name="MadLabXY")
+import ctypes
+import atexit
 
-    def loadDevice(self):
+class ErrorCodes:
+    # Task has been completed successfully.
+    MCL_SUCCESS = 0
+
+    # These errors generally occur due to an internal sanity check failing.
+    MCL_GENERAL_ERROR = -1
+
+    # A problem occurred when transferring data to the Micro-Drive.
+    # It is likely that the Micro-Drive will have to be 	 power cycled to correct these errors.
+    MCL_DEV_ERROR = -2
+
+    # The Micro-Drive cannot complete the task because it is not attached.
+    MCL_DEV_NOT_ATTACHED = -3
+
+    # Using a function from the library which the Micro-Drive does not support causes these errors.
+    MCL_USAGE_ERROR = -4
+
+    # The Micro-Drive is currently completing or waiting to complete another task.
+    MCL_DEV_NOT_READY = -5
+
+    # An argument is out of range or a required pointer is equal to NULL.
+    MCL_ARGUMENT_ERROR = -6
+
+    # Attempting an operation on an axis that does not exist in the Micro-Drive.
+    MCL_INVALID_AXIS = -7
+
+    # The handle is not valid.  Or at least is not valid in this instance of the DLL.
+    MCL_INVALID_HANDLE = -8
+
+
+
+class madLibCity_XY(XYStage):
+    def __init__(self, mac_guiver, serial_number=None):
+        super(madLibCity_XY, self).__init__(mac_guiver, frameName="MCL_XY", mm_name="MadLabXY")
+        self.serial_number = serial_number
+        self.handle = None
+
+    def load_device(self):
+        self.mac_guiver.write_to_splash_screen("Loading MCL XY")
         try:
-            self.mmc.loadDevice(self.mm_name, "MCL_MicroDrive", "MicroDrive XY Stage")
-            self.mmc.initializeDevice(self.mm_name)
-            return True
+            # self.mmc.load_device(self.mm_name, "MCL_MicroDrive", "MicroDrive XY Stage")
+            # self.mmc.initializeDevice(self.mm_name)
+
+            mcl_lib_path = "c:/Program Files/Mad City Labs/Microdrive/MicroDrive"
+            self.mcl_lib = ctypes.cdll.LoadLibrary(mcl_lib_path)
         except:
-            print("MCL_XY ini pb")
+            self.mac_guiver.write_to_splash_screen("MCL_XY ini pb -> driver file (.dll) not found. Check MCL_controller.py")
             return False
 
-    def moveAbsolute(self, posMicron):
-        self.mmc.setXYPosition(self.mm_name, self.posMicron[0], self.posMicron[1])
+        # One handle per DRIVER (and not per axis)
+        try:
+            if self.serial_number is not None :
+                self.handle = self.mcl_lib.MCL_GetHandleBySerial(self.serial_number)
+            else:
+                self.handle = self.mcl_lib.MCL_InitHandle()
+            if self.handle == 0:
+                self.mac_guiver.write_to_splash_screen("MCL_XY ini pb -> error while getting the handle")
+                return False
+        except:
+            self.mac_guiver.write_to_splash_screen("MCL_XY ini pb -> error while getting the handle")
+            return False
 
-    def moveRelative(self, posMicron):
-        self.mmc.setRelativeXYPosition(self.mm_name, posMicron[0], posMicron[1])
+        """
+        bool MCL_DeviceAttached(unsigned int milliseconds, int handle)
+        Function waits for a specified number of milliseconds then reports whether or not the Micro-Drive is attached. 
 
-    def waitForDevice(self):
-        self.mmc.waitForDevice(self.mm_name)
+        Parameters:
+        milliseconds 	[IN]	Indicates how long to wait.
+        handle		[IN]	Specifies which Micro-Drive to communicate with.
+
+        Return Value:
+        Returns true if the specified Micro-Drive is attached and false if it is not.
+        """
+        wait_time_before_checking_ms = 50
+        result = self.mcl_lib.MCL_DeviceAttached(wait_time_before_checking_ms, self.handle)
+
+        if result is False:
+            self.mac_guiver.write_to_splash_screen("MCL_XY ini pb -> Device attached test failed")
+            return False
+
+        """
+        int MCL_GrabAllHandles() 
+        Requests control of all of the attached Mad City Labs Micro-Drives that are not yet under control.
+        
+        Return Value:
+        Returns the number of Micro-Drives currently controlled by this instance of the DLL.
+        
+        Notes:
+        After calling this function use MCL_GetHandleBySerialNumber to get the handle of a specific device.
+        
+        Use MCL_NumberOfCurrentHandles and MCL_GetAllHandles to get a list of the handles acquired by this function.
+        
+        Remember that this function will take control of all of the attached Micro-Drives not currently under control.  
+        Some of the aquired handles may need to be released if those Micro-Drives are needed in other applications.
+        """
+        # num_devices = self.mcl_lib.MCL_GrabAllHandles()
+
+        """
+        int MCL_GetAllHandles(int *handles, int size)
+        Fills a list with valid handles to the Micro-Drives currently under the control of this instance of the DLL.
+
+        Parameters:
+        handles	[IN/OUT]	Pointer to an array of  'size' integers.
+        size	[IN] 		Size of the 'handles' array
+
+        Return Value:
+        Returns the number of valid handles put into the 'handles' array.
+        """
+
+
+
+
+        """
+        int MCL_GetHandleBySerial(short serial)
+        Searches Micro-Drives currently controlled for a Micro-Drive whose serial number matches 'serial'.
+        
+        Parameters:
+        serial	[IN] 	Serial # of the Micro-Drive whose handle you want to lookup.
+        
+        Return Value:
+        Returns a valid handle or returns 0 to indicate failure.
+        
+        Notes:
+        Since this function only searches through Micro-Drives which the DLL is controlling, MCL_GrabAllHandles() or multiple calls to MCL_(Init/Grab)Handle should be called before using this function.
+        """
+
+        # if self.serial_number_x is not None:
+        #     self.handle_x = self.mcl_lib.MCL_GetHandleBySerial(self.serial_number_x)
+        # if self.serial_number_y is not None :
+        #     self.handle_y = self.mcl_lib.MCL_GetHandleBySerial(self.serial_number_y)
+
+
+
+
+
+
+
+        """
+        int MCL_GetFullStepSize(double *stepSize, int handle)
+        Allows the program to query the size of a full step.  This information combined with the micro step size
+        from MCL_MDInformation can be used to determine the number of micro steps per full step.  Some applications may wish to stop on full steps or half steps.  The rounding arguments for the move funcitons will round to either full, half, or nearest step.
+        
+        Parameters:
+        stepSize 	[IN/OUT] Set to the size of a full step.
+        handle	[IN]	Specifies which Micro-Drive to communicate with.
+        
+        Return Value:
+        Returns MCL_SUCCESS or the appropriate error code.
+        """
+
+        return True
+
+    def move_absolute(self, pos_micron):
+        # self.mmc.setXYPosition(self.mm_name, self.posMicron[0], self.posMicron[1])
+        """
+         int 	MCL_MDMoveThreeAxes(
+		int axis1, double velocity1, double distance1,
+		int axis2, double velocity2, double distance2,
+		int axis3, double velocity3, double distance3,
+		int handle)
+        :param pos_micron:
+        :return:
+        """
+        result = self.mcl_lib.MCL_MDMove(1, self.speed, pos_micron[0]/1000.0, 2, self.speed, pos_micron[1]/1000.0, 0, 0, 0, self.handle)
+        return result
+
+
+    def move_relative(self, pos_micron):
+        # self.mmc.setRelativeXYPosition(self.mm_name, pos_micron[0], pos_micron[1])
+        """
+         int 	MCL_MDMoveThreeAxes(
+        int axis1, double velocity1, double distance1,
+        int axis2, double velocity2, double distance2,
+        int axis3, double velocity3, double distance3,
+        int handle)
+        :param pos_micron:
+        :return:
+        """
+        result = self.mcl_lib.MCL_MDMove(1, self.speed, pos_micron[0] / 1000.0, 2, self.speed, pos_micron[1] / 1000.0,
+                                         0, 0, 0, self.handle)
+        return result
+
+    def wait_for_device(self):
+        #TODO loop
+        result = -1
+        while result != 0:
+            result = self.mcl_lib.MCL_MicroDriveWait(self.handle)
 
     def stop(self):
-        self.mmc.stop(self.mm_name)
+        # TODO analyze status.
+        status = ctypes.c_ushort(0)
+        result = self.mcl_lib.MCL_MDStop(ctypes.addressof(status), self.handle)
+        return result
+
+    def close_device(self, params=None):
+        self.mcl_lib.MCL_ReleaseAllHandles()
+
