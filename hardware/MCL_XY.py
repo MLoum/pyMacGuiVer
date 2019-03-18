@@ -41,9 +41,9 @@ class ErrorCodes:
 
 class madLibCity_XY(XYStage):
     def __init__(self, mac_guiver, serial_number=None):
-        super(madLibCity_XY, self).__init__(mac_guiver, frameName="MCL_XY", mm_name="MadLabXY")
-        self.serial_number = serial_number
         self.handle = None
+        self.serial_number = serial_number
+        super(madLibCity_XY, self).__init__(mac_guiver, frameName="MCL_XY", mm_name="MadLabXY")
 
     def load_device(self):
         self.mac_guiver.write_to_splash_screen("Loading MCL XY")
@@ -142,7 +142,17 @@ class madLibCity_XY(XYStage):
 
 
 
-
+        # https://stackoverflow.com/questions/43317409/ctypes-argumenterror-dont-know-how-to-convert-parameter
+        """
+        int 	MCL_MDMoveThreeAxesR(
+		int axis1, double velocity1, double distance1, int rounding1,
+		int axis2, double velocity2, double distance2, int rounding2,
+		int axis3, double velocity3, double distance3, int rounding3,
+		int handle)
+		"""
+        self.mcl_lib.MCL_MDMoveThreeAxesR.argtypes = [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
+                                                      ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
+                                                      ctypes.c_int]
 
 
         """
@@ -178,16 +188,38 @@ class madLibCity_XY(XYStage):
     def move_relative(self, pos_micron):
         # self.mmc.setRelativeXYPosition(self.mm_name, pos_micron[0], pos_micron[1])
         """
-         int 	MCL_MDMoveThreeAxes(
-        int axis1, double velocity1, double distance1,
-        int axis2, double velocity2, double distance2,
-        int axis3, double velocity3, double distance3,
-        int handle)
+
+        //MCL_MDMoveThreeAxesR -> en relatif.
+
+         int 	MCL_MDMoveThreeAxesR(
+		int axis1, double velocity1, double distance1, int rounding1,
+		int axis2, double velocity2, double distance2, int rounding2,
+		int axis3, double velocity3, double distance3, int rounding3,
+		int handle)
+Standard movement function.  Acceleration and deceleration ramps are generated for the specified motion. In some cases when taking smaller steps the velocity parameter may be coerced to its maximum achievable value. The maximum and minimum velocities can be found using MCL_MDInformation. The maximum velocity differs depending on how many axes are commaned to move.
+
+Parameters:
+axis(1/2/3)	[IN]	Which axis to move.  (M1=1, M2=2, M3=3, M4=4, M5=5, M6=6) If using a Micro-Drive1,
+			this argument is ignored.
+velocity(1/2/3)	[IN]	Speed in mm/sec.
+distance(1/2/3)	[IN]	Distance in mm to move the stage.  Positive distances move the stage toward its forward limit 				switch.  Negative distances move it toward its reverse limit switch.  A value of 0.0 will result in 				the axis not moving.
+rounding(1/2/3)	[IN]	Determines how to round the distance parameter:
+				0 - Nearest microstep.
+				1 - Nearest full step.
+				2 - Nearest half step.
+handle		[IN]	Specifies which Micro-Drive to communicate with.
+
+Return Value:
+Returns MCL_SUCCESS or the appropriate error code.
+
+Notes:
+Care should be taken not to access the Micro-Drive while the microstage is moving for any reason other than stopping it. Doing so will adversely affect the internal timers of the Micro-Drive which generate the required step pulses for the specified movement.
+
+
         :param pos_micron:
         :return:
         """
-        result = self.mcl_lib.MCL_MDMove(1, self.speed, pos_micron[0] / 1000.0, 2, self.speed, pos_micron[1] / 1000.0,
-                                         0, 0, 0, self.handle)
+        result = self.mcl_lib.MCL_MDMoveThreeAxesR(1, self.speed[0] / 1000.0, pos_micron[0] / 1000.0, 0, 2, self.speed[1] / 1000.0, pos_micron[1] / 1000.0, 0, 0, 0, 0, 0, self.handle)
         return result
 
     def wait_for_device(self):

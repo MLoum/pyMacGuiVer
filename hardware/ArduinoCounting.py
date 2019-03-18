@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+from Device import Device
 from Arduino import Arduino
 import serial
 import threading
@@ -18,7 +19,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from mpl_toolkits.mplot3d import Axes3D
 # import time
 import numpy as np
-
+import time
 
 class ArduinoCouting(Arduino):
     def __init__(self, mac_guiver, frameName="Arduino Counting", mm_name=""):
@@ -28,7 +29,7 @@ class ArduinoCouting(Arduino):
         self.isMonitor = False
 
         # FIXME
-        self.change_com_port("COM9")
+        self.change_com_port("COM10")
         self.initialized = self.load_device()
         if self.initialized == False:
             return
@@ -154,12 +155,27 @@ class ArduinoCouting(Arduino):
 
         #print("Ending thread ?")
 
+    def count(self):
+        """
+        Cette fonction est bloquante contrairement à monitor.
+        :return:
+        """
+        self.send_command("c/")
+        line = self.serialPort.readline()
+        try:
+            i = int(line)
+            return i
+        except ValueError:
+            # Handle the exception
+            print("Pb Arduino Counting Transfert - not a number")
+            return 0
+
     def send_command_gui(self):
         self.send_command(self.send_command_entry_sv.get())
-        self.thread_send_cmd = threading.Thread(name='arduino_send_cmd', target=self.wait_asnwer_after_command)
+        self.thread_send_cmd = threading.Thread(name='arduino_send_cmd', target=self.wait_answer_after_command)
         self.thread_send_cmd.start()
 
-    def wait_asnwer_after_command(self):
+    def wait_answer_after_command(self):
         self.serial_answer_sv.set(self.serialPort.readline())
 
 
@@ -213,5 +229,24 @@ class ArduinoCouting(Arduino):
         self.idx_history = 0
 
 
+class dummy_counter(Device):
+    def __init__(self, mac_guiver, frameName="DummyCounter", mm_name=""):
+        super(dummy_counter, self).__init__(mac_guiver, frameName, mm_name)
+        self.int_time_ms = 50.0
+        self.load_device()
 
+    def load_device(self, params=None):
+        self.mac_guiver.write_to_splash_screen("Loading dummy counter", type="info")
+        self.initialized = True
+        return True
+
+    def create_GUI(self):
+        pass
+
+    def count(self):
+        time.sleep(self.int_time_ms/1000.0)
+        return np.random.randint(50,10000)
+
+    def change_integration_time(self, int_time_ms):
+        self.int_time_ms = int_time_ms
 

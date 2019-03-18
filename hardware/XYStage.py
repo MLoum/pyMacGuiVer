@@ -4,7 +4,8 @@
 from Device import Device
 
 import Tkinter as tk
-#from Tkinter import filedialog, messagebox, simpledialog, tkMessageBox
+import tkMessageBox
+# from Tkinter import filedialog, messagebox, simpledialog, tkMessageBox
 import SimpleDialog
 
 class addListPointDialog(SimpleDialog.SimpleDialog):
@@ -187,56 +188,56 @@ class XYStage(Device):
         self.plot_position_on_graph()
 
         #cursor =
-        self.posTreeView= ttk.Treeview(self.frame, height=7, columns=('PosX', 'PosY'), selectmode="browse")
-        self.posTreeView.grid(row=0, column=7, rowspan=3)
-        self.posTreeView.heading('#0', text='label', anchor=tk.CENTER, )
-        self.posTreeView.heading('#1', text='PosX', anchor=tk.CENTER)
-        self.posTreeView.heading('#2', text='PosY', anchor=tk.CENTER)
-        self.posTreeView.column('#1', stretch=tk.YES, minwidth=50, width=50)
-        self.posTreeView.column('#2', stretch=tk.YES, minwidth=50, width=50)
-        self.posTreeView.column('#0', stretch=tk.YES, minwidth=50, width=50)
+        self.pos_tree_view = ttk.Treeview(self.frame, height=7, columns=('PosX', 'PosY'), selectmode="browse")
+        self.pos_tree_view.grid(row=0, column=7, rowspan=3)
+        self.pos_tree_view.heading('#0', text='label', anchor=tk.CENTER, )
+        self.pos_tree_view.heading('#1', text='PosX', anchor=tk.CENTER)
+        self.pos_tree_view.heading('#2', text='PosY', anchor=tk.CENTER)
+        self.pos_tree_view.column('#1', stretch=tk.YES, minwidth=50, width=50)
+        self.pos_tree_view.column('#2', stretch=tk.YES, minwidth=50, width=50)
+        self.pos_tree_view.column('#0', stretch=tk.YES, minwidth=50, width=50)
 
-        self.frameToolButtonPos=tk.Frame(self.frame)
-        self.frameToolButtonPos.grid(row=2, column=7, rowspan=3)
+        self.frame_tool_button_pos = tk.Frame(self.frame)
+        self.frame_tool_button_pos.grid(row=2, column=7, rowspan=3)
 
-        b = tk.Button(self.frameToolButtonPos, text="+", command=self.add_pos)
-        b.grid(row=0, column = 0)
-        b = tk.Button(self.frameToolButtonPos, text="-", command=self.removePos)
-        b.grid(row=0, column = 1)
-        b = tk.Button(self.frameToolButtonPos, text="goTo", command=self.goToPos)
-        b.grid(row=0, column = 2)
-        b = tk.Button(self.frameToolButtonPos, text="SetHome", command=self.setHome)
-        b.grid(row=0, column = 2)
+        b = tk.Button(self.frame_tool_button_pos, text="+", command=self.add_pos)
+        b.grid(row=0, column=0)
+        b = tk.Button(self.frame_tool_button_pos, text="-", command=self.remove_pos)
+        b.grid(row=0, column=1)
+        b = tk.Button(self.frame_tool_button_pos, text="goTo", command=self.go_to_pos)
+        b.grid(row=0, column=2)
+        b = tk.Button(self.frame_tool_button_pos, text="SetHome", command=self.set_home)
+        b.grid(row=0, column=2)
 
-        self.posTreeView.tag_bind('ttk', '<1>', self.pos_Selected)
-
-        # self.insertLineInPosTreeView("t1", 0, 82)
-        # self.insertLineInPosTreeView("t2", 1, 81)
-
-        #.identify_row(y)
-        #.insert(parent, index, iid=None, **kw)
+        self.pos_tree_view.tag_bind('ttk', '<1>', self.pos_Selected)
 
     def pos_Selected(self):
         pass
 
     def insert_line_in_pos_TreeView(self, label, posX, posY):
-        iid = self.posTreeView.insert(parent="", index='end', text=label, value=(str(posX), str(posY)))
+        iid = self.pos_tree_view.insert(parent="", index='end', text=label, value=(str(posX), str(posY)))
         self.posDict[iid] = [label, posX, posY]
+
     def add_pos(self):
-
         d = addListPointDialog(self.master, title="New Position", pos=self.pos)
-        if d.result != None:
-            time_s, count_per_secound = d.result
-            #TODO fill table
+        if d.result is not None:
+            x, y, name = d.result
+            self.insert_line_in_pos_TreeView(name, x, y)
 
-    def removePos(self):
-        pass
-    def goToPos(self):
-        pass
-    def setHome(self):
-        pass
+    def remove_pos(self):
+        id_selected_item = self.pos_tree_view.focus()
+        # selected_item = self.pos_tree_view.item(id_selected_item)
+        self.pos_tree_view.delete(id_selected_item)
 
 
+    def go_to_pos(self):
+        id_selected_item = self.pos_tree_view.focus()
+        # selected_item = self.pos_tree_view.item(id_selected_item)
+        label, x, y = self.posDict[id_selected_item]
+        self.move(mode="absolute", posMicron=[x, y])
+
+    def set_home(self):
+        pass
 
     def get_GUI_params(self):
         #TODO check numeric and positive.
@@ -325,10 +326,3 @@ class XYStage(Device):
 
     def stop(self):
         pass
-        # self.mmc.stop(self.mm_name)
-
-    # def addPositionList(self, pos="current", label=):
-    #     if pos == "current":
-    #         pos = self.posMicron
-    #     self.posDict
-    #     self.posListBox.insert(END, key)

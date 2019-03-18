@@ -1,6 +1,6 @@
 import Tkinter as tk
 import ttk
-from hardware import MCL_XY, Standa_XY, ArduinoCounting, Spectro, dummy_XYStage, motorArduino
+from hardware import MCL_XY, Standa_XY, ArduinoCounting, Spectro, dummy_XYStage, motorArduino, xy_scanner
 from Control import midiControl
 from SplashScreen import SplashScreen
 from selectHardwareWindow import SelectHardwareWindow
@@ -145,11 +145,30 @@ class macGuiver():
             self.countingArduino = ArduinoCounting.ArduinoCouting(self)
             if self.countingArduino.initialized:
                 self.listHardware.append(self.countingArduino)
+
+        if hardware_selection["scan-arduino-standa"]:
+            #TODO Test if arduino and standa ?
+            # self.xy_scanner = xy_scanner.XYScanner(self, self.standa_XY, self.countingArduino)
+            # self.dummy_XY = dummy_XYStage.dummy_XY(self)
+            # self.dummy_counting = ArduinoCounting.dummy_counter(self)
+            # self.xy_scanner = xy_scanner.XYScanner(self, self.dummy_XY, self.dummy_counting)
+            if self.standa_XY.initialized and self.countingArduino.initialized:
+                self.xy_scanner = xy_scanner.XYScanner(self, self.standa_XY, self.countingArduino)
+                if self.xy_scanner.initialized:
+                    self.listHardware.append(self.xy_scanner)
+                    # self.listHardware.append(self.dummy_XY)
+
+        if hardware_selection["Spectro"]:
+            self.spectro = Spectro.Spectro(self)
+            self.listHardware.append(self.spectro)
+
         if hardware_selection["Fianium"]:
             pass
         if hardware_selection["Spectro"]:
             self.spectro = Spectro.Spectro(self)
             self.listHardware.append(self.spectro)
+
+
 
     def create_midi_control(self):
         self.midiListener = midiControl.MidiListener(self)

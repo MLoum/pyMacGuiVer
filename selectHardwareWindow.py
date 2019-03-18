@@ -28,22 +28,27 @@ class SelectHardwareWindow():
         checkbutton = tk.Checkbutton(self.top_level, text="Arduino Counting", variable=self.arduino_counting_cb_iv)
         checkbutton.grid(row=2, column=0)
 
+        self.scan_arduino_Standa_cb_iv = tk.IntVar()
+        checkbutton = tk.Checkbutton(self.top_level, text="XY Scanner", variable=self.scan_arduino_Standa_cb_iv)
+        checkbutton.grid(row=3, column=0)
+
         self.fianium_cb_iv = tk.IntVar()
         checkbutton = tk.Checkbutton(self.top_level, text="Fianium (Work In progress)", variable=self.fianium_cb_iv)
-        checkbutton.grid(row=3, column=0)
+        checkbutton.grid(row=4, column=0)
 
         self.spectro_cb_iv = tk.IntVar()
         checkbutton = tk.Checkbutton(self.top_level, text="Spectro (Work In progress)", variable=self.spectro_cb_iv)
-        checkbutton.grid(row=4, column=0)
+        checkbutton.grid(row=5, column=0)
 
         self.exit_button = tk.Button(self.top_level, text="OK", command=self.on_exit)
-        self.exit_button.grid(row=5, column=0)
+        self.exit_button.grid(row=6, column=0)
 
     def on_exit(self):
         selection = {}
         selection['MCL_XY'] = self.MCL_cb_iv.get()
         selection['Standa_XY'] = self.standa_cb_iv.get()
         selection['Arduino_counting'] = self.arduino_counting_cb_iv.get()
+        selection['scan-arduino-standa'] = self.scan_arduino_Standa_cb_iv.get()
         selection['Fianium'] = self.fianium_cb_iv.get()
         selection['Spectro'] = self.spectro_cb_iv.get()
         self.root.start_splash_screen(selection)

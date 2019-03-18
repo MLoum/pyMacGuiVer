@@ -194,8 +194,11 @@ class Standa_XY(XYStage):
         :param pos_micron:
         :return:
         """
-        result = self.lib.command_move(self.device_id_x, pos_micron[0], 0)
-        self.lib.command_move(self.device_id_y, pos_micron[1], 0)
+        nb_of_step_x = int(pos_micron[0])
+        nb_of_step_y = int(pos_micron[1])
+
+        result = self.lib.command_move(self.device_id_x, nb_of_step_x[0], 0)
+        self.lib.command_move(self.device_id_y, nb_of_step_y[1], 0)
         return result
 
 
