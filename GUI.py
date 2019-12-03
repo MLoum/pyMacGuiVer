@@ -1,7 +1,8 @@
+from __future__ import print_function
 import Tkinter as tk
 import ttk
-from hardware import MCL_XY, Standa_XY, ArduinoCounting, Spectro, dummy_XYStage, motorArduino, xy_scanner
-from Control import midiControl
+from hardware import MCL_XY, Standa_XY, ArduinoCounting, ArduinoPulser, Spectro, dummy_XYStage, motorArduino, xy_scanner, OB1_MK3, fpga_nist
+from Control import midiControl, joystick
 from SplashScreen import SplashScreen
 from selectHardwareWindow import SelectHardwareWindow
 # import MMCorePy
@@ -49,6 +50,9 @@ class macGuiver():
         self.splash_screen = None
         # self.start_splash_screen()
         # self.root.update()
+
+        self.joystick_listener = None
+        self.madLibCity_XY = None
 
         self.select_hardware_frame = SelectHardwareWindow(self)
 
@@ -104,6 +108,7 @@ class macGuiver():
 
 
         self.create_gui()
+        self.launch_ctrl()
         self.close_splash_screen()
         #self.midiListener.startListening()
         #self.createMenuCommands()
@@ -145,6 +150,22 @@ class macGuiver():
             self.countingArduino = ArduinoCounting.ArduinoCouting(self)
             if self.countingArduino.initialized:
                 self.listHardware.append(self.countingArduino)
+        if hardware_selection["Elveflow OB1"]:
+            self.ob1 = OB1_MK3.OB1MK3(self)
+            if self.ob1.initialized:
+                self.listHardware.append(self.ob1)
+        if hardware_selection["Arduino_pulser"]:
+            self.arduino_pulser = ArduinoPulser.ArduinoPulser(self)
+            if self.arduino_pulser.initialized:
+                self.listHardware.append(self.arduino_pulser)
+        if hardware_selection["FPGA Nist"]:
+            self.fpga_nist = fpga_nist.FPGA_nist(self)
+            if self.fpga_nist.initialized:
+                self.listHardware.append(self.fpga_nist)
+        # if hardware_selection["Thoralbs filter select"]:
+        #     self.arduino_pulser = ArduinoPulser.ArduinoPulser(self)
+        #     if self.arduino_pulser.initialized:
+        #         self.listHardware.append(self.arduino_pulser)
 
         if hardware_selection["scan-arduino-standa"]:
             #TODO Test if arduino and standa ?
@@ -168,12 +189,24 @@ class macGuiver():
             self.spectro = Spectro.Spectro(self)
             self.listHardware.append(self.spectro)
 
+        # if hardware_selection["midi_crtl"]:
+        #     self.create_midi_control()
+
+        if hardware_selection["joy_crtl"]:
+            self.create_joystick_control()
+            self.listHardware.append(self.joystick_listener)
+
 
 
     def create_midi_control(self):
         self.midiListener = midiControl.MidiListener(self)
         self.register_midi_callback()
         self.midiListener.createGUI()
+
+    def create_joystick_control(self):
+        self.joystick_listener = joystick.JoystickListener(self)
+        self.register_joy_callback()
+        self.joystick_listener.createGUI()
 
     def create_gui(self):
         for device in self.listHardware:
@@ -189,6 +222,10 @@ class macGuiver():
 
         # self.midiListener.frame.pack()
 
+    def launch_ctrl(self):
+        if self.joystick_listener is not None:
+            self.joystick_listener.start_listening()
+
     def register_midi_callback(self):
         self.midiListener.registerCallback(type="relative", name="MCL_X", midiCC=32, callBack=[self.dummy_XYStage.move_left, self.dummy_XYStage.move_right])
         self.midiListener.registerCallback(type="relative", name="MCL_Y", midiCC=33,
@@ -201,6 +238,22 @@ class macGuiver():
         self.midiListener.registerCallback(type="relative", name="MCL_StepX_big", midiCC=48, inc=10, tkVariable=self.dummy_XYStage.stepX_sv, callBack=[self.dummy_XYStage.get_GUI_params, self.dummy_XYStage.get_GUI_params])
         self.midiListener.registerCallback(type="relative", name="MCL_StepY_big", midiCC=49, inc=10,
                                            tkVariable=self.dummy_XYStage.stepY_sv, callBack=[self.dummy_XYStage.get_GUI_params, self.dummy_XYStage.get_GUI_params])
+
+    def register_joy_callback(self):
+
+
+        if self.madLibCity_XY is not None:
+            self.joystick_listener.registerCallback(type="button", num=0, name="MCL_dblStep",
+                                                    callBack=self.madLibCity_XY.double_step)
+            self.joystick_listener.registerCallback(type="button", num=1, name="MCL_halfStep",
+                                                    callBack=self.madLibCity_XY.halve_step)
+
+            self.joystick_listener.registerCallback(type="axis", num=1, name="MCL_up", callBack=self.madLibCity_XY.move_right)
+            self.joystick_listener.registerCallback(type="axis", num=-1, name="MCL_down", callBack=self.madLibCity_XY.move_left)
+            self.joystick_listener.registerCallback(type="axis", num=2, name="MCL_left", callBack=self.madLibCity_XY.move_down)
+            self.joystick_listener.registerCallback(type="axis", num=-2, name="MCL_right", callBack=self.madLibCity_XY.move_up)
+
+
 
     def onQuit(self):
         # paramFile = open('param.ini', 'w')

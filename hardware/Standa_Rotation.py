@@ -14,16 +14,16 @@ if sys.version_info >= (3, 0):
     import urllib.parse
 
 
-from XYStage import XYStage
+from RotationStage import RotationStage
 
 from standa.pyximc import *
 
-class Standa_XY(XYStage):
+class Standa_XY(RotationStage):
     def __init__(self, mac_guiver):
         self.lib = None
         self.device_id = None
         self.step_multiplier = 40
-        super(Standa_XY, self).__init__(mac_guiver, frameName="Standa_XY", mm_name="StandaXY")
+        super(Standa_XY, self).__init__(mac_guiver, frameName="Rotation_Standa", mm_name="Rotation_Standa")
 
 
     def load_device(self, params=None):
@@ -43,7 +43,7 @@ class Standa_XY(XYStage):
         # self.mmc.setProperty(self.mm_name, "UnitMultiplierY", "0.054")
         # self.mmc.initializeDevice(self.mm_name)
 
-        self.mac_guiver.write_to_splash_screen("Loading XY standa")
+        self.mac_guiver.write_to_splash_screen("Loading Rotation standa")
 
         # Load library
         def __ximc_shared_lib(dll_path):
@@ -109,6 +109,7 @@ class Standa_XY(XYStage):
         self.lib.get_device_name.restype = c_char_p
 
         # print("Library loaded")
+
         self.sbuf = create_string_buffer(64)
         self.lib.ximc_version(self.sbuf)
         # print("Library version: " + self.sbuf.raw.decode().rstrip("\0"))
@@ -181,7 +182,7 @@ class Standa_XY(XYStage):
         return True
 
 
-    def move_absolute(self, pos_micron):
+    def move_absolute(self, pos_angle_deg):
         """
         result t XIMC API command move ( device t id, int Position, int uPosition )
         Position position to move.
@@ -194,15 +195,13 @@ class Standa_XY(XYStage):
         :param pos_micron:
         :return:
         """
-        nb_of_step_x = int(pos_micron[0])
-        nb_of_step_y = int(pos_micron[1])
+        nb_of_step = pos_angle_deg
 
-        result = self.lib.command_move(self.device_id_x, nb_of_step_x[0], 0)
-        self.lib.command_move(self.device_id_y, nb_of_step_y[1], 0)
+        result = self.lib.command_move(self.device_id_x, nb_of_step, 0)
         return result
 
 
-    def move_relative(self, pos_micron):
+    def move_relative(self, pos_angle_deg):
         """
         result t XIMC API command move ( device t id, int Position, int uPosition )
         Position position to move.
@@ -220,11 +219,9 @@ class Standa_XY(XYStage):
         """
 
         #TODO WHAT IS THE UNIT for DC Motor ???? -> counts
-        nb_of_step_x = int(pos_micron[0] * self.step_multiplier)
-        nb_of_step_y = int(pos_micron[1] * self.step_multiplier)
+        nb_of_step = int(pos_angle_deg * self.step_multiplier)
 
-        result = self.lib.command_movr(self.device_id_x, nb_of_step_x, 0)
-        self.lib.command_movr(self.device_id_y, nb_of_step_y, 0)
+        result = self.lib.command_movr(self.device_id_x, nb_of_step, 0)
         # self.get_position()
         # result = self.lib.command_move(self.device_id_x, self.posMicron[0] + pos_micron[0], 0)
         # result = self.lib.command_move(self.device_id_y, self.posMicron[1] + pos_micron[1], 0)
@@ -268,8 +265,7 @@ class Standa_XY(XYStage):
 
         while result != 0:
             result_x = self.lib.command_wait_for_stop(self.device_id_x, interval)
-            result_y = self.lib.command_wait_for_stop(self.device_id_y, interval)
-            result = result_x and result_y
+            result = result_x
 
         self.is_busy_ = False
 
@@ -288,7 +284,6 @@ class Standa_XY(XYStage):
         :return:
         """
         result = self.lib.command_stop(self.device_id_x)
-        self.lib.command_stop(self.device_id_y)
         return result
 
     def is_busy(self):
@@ -296,7 +291,6 @@ class Standa_XY(XYStage):
 
     def close_device(self, params=None):
         result = self.lib.close_device(byref(cast(self.device_id_x, POINTER(c_int))))
-        result = self.lib.close_device(byref(cast(self.device_id_y, POINTER(c_int))))
         # self.lib.close_device(self.device_id_y)
         return result
 
@@ -306,10 +300,7 @@ class Standa_XY(XYStage):
         x_pos = get_position_t()
         result = self.lib.get_position(self.device_id_x, byref(x_pos))
         if result == Result.Ok:
-            self.posMicron[0] = x_pos.Position
-        result = self.lib.get_position(self.device_id_y, byref(x_pos))
-        if result == Result.Ok:
-            self.posMicron[1] = x_pos.Position
+            self.pos_angle_deg = x_pos.Position
 
         # print("Result: " + repr(result))
         #

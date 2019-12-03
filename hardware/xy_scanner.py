@@ -113,21 +113,21 @@ class XYScanner(Device):
         b.grid(row=2, column=5)
 
 
-        label = ttk.Label(self.frame_cmd, text='Integration time (ms)')
-        label.grid(row=3, column=0)
+        ttk.Label(self.frame_cmd, text='Integration time (ms)').grid(row=3, column=0)
+
         self.integration_time_sv = tk.StringVar()
         e = ttk.Entry(self.frame_cmd, textvariable=self.integration_time_sv, justify=tk.CENTER, width=7)
         e.grid(row=3, column=1)
         self.integration_time_sv.set("100")
 
-        b = tk.Button(self.frame_cmd, text="Save Image", command=self.save_scan_image)
-        b.grid(row=3, column=2)
+        tk.Button(self.frame_cmd, text="Save Image", command=self.save_scan_image).grid(row=3, column=2)
 
 
-        b = tk.Button(self.frame_cmd, text="launch scan", command=self.launch_scan)
-        b.grid(row=4, column=0)
-        b = tk.Button(self.frame_cmd, text="STOP", command=self.do_stop_scan)
-        b.grid(row=4, column=1)
+
+        tk.Button(self.frame_cmd, text="launch scan", command=self.launch_scan).grid(row=4, column=0)
+
+        tk.Button(self.frame_cmd, text="STOP", command=self.do_stop_scan).grid(row=4, column=1)
+
         self.info_graph_sv = tk.StringVar()
         e = ttk.Entry(self.frame_cmd, textvariable=self.info_graph_sv, justify=tk.CENTER, width=45)
         e.configure(state='readonly')
@@ -209,8 +209,8 @@ class XYScanner(Device):
 
     def motion_notify_event(self, event):
         if event.xdata is not None and event.ydata is not None and  self.scan_data is not None :
-            x_pos = int(event.xdata) * self.step_size
-            y_pos = int(event.ydata) * self.step_size
+            x_pos = int(event.xdata + 0.5) * self.step_size
+            y_pos = int(event.ydata + 0.5) * self.step_size
             intensity = self.scan_data[int(event.xdata), int(event.ydata)]
             self.info_graph_sv.set("x: %d, y :%d, int : %d" % (x_pos, y_pos, intensity))
 
@@ -245,7 +245,10 @@ class XYScanner(Device):
                     break
                 # move
                 # Count is a blocking process
-                self.scan_data[x, y] = self.counter.count()
+                if direction == 1 :
+                    self.scan_data[y, x] = self.counter.count()
+                else:
+                    self.scan_data[y, self.nb_step_x - 1 - x] = self.counter.count()
 
                 self.xyStage.move(mode="relative", posMicron=[self.step_size * direction, 0])
                 self.xyStage.wait_for_device()
@@ -266,7 +269,7 @@ class XYScanner(Device):
     def refresh_canvas(self):
         #TODO normalize cf  , norm= = colors.Normalize
         self.ax.clear()
-        self.ax.imshow(self.scan_data, aspect="auto")
+        self.ax.imshow(self.scan_data, aspect="auto", cmap='gray')
         self.canvas.draw()
         #TODO colorbar.
         # self.ax.color

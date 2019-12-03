@@ -29,7 +29,7 @@ class ArduinoCouting(Arduino):
         self.isMonitor = False
 
         # FIXME
-        self.change_com_port("COM10")
+        self.change_com_port("COM11")
         self.initialized = self.load_device()
         if self.initialized == False:
             return
@@ -111,6 +111,8 @@ class ArduinoCouting(Arduino):
         b = tk.Button(self.frame, text="clear", command=self.clear_history)
         b.grid(row=0, column = 5)
 
+        b = tk.Button(self.frame, text="Toggle LED", command=self.toggle_led)
+        b.grid(row=0, column = 6)
 
         # self.figure.canvas.mpl_connect('scroll_event', self.graphScrollEvent)
         # self.figure.canvas.mpl_connect('button_press_event', self.graph_button_press_event)
@@ -141,7 +143,7 @@ class ArduinoCouting(Arduino):
         while self.isMonitor == True:
             line = self.serialPort.readline()
             if line != "":
-                #print(line)
+                print(line)
                 try:
                     i = int(line)
                     self.add_point_to_history(int(i))
@@ -227,6 +229,10 @@ class ArduinoCouting(Arduino):
     def clear_history(self):
         self.history[:] = 0
         self.idx_history = 0
+
+    def toggle_led(self):
+        cmd = "l/"
+        self.send_command(cmd)
 
 
 class dummy_counter(Device):

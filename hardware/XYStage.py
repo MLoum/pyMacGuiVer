@@ -79,6 +79,8 @@ class XYStage(Device):
         self.posDict = {}
         self.listPosTreeView_iid = []
 
+        self.is_rotate_XY = 0
+
         self.initialized = self.load_device()
         if self.initialized:
             self.create_GUI()
@@ -123,7 +125,7 @@ class XYStage(Device):
         e = ttk.Entry(self.frame, textvariable=self.stepX_sv, justify=tk.CENTER, width=7)
         e.bind('<Return>', lambda e: self.get_GUI_params())
         e.grid(row=0, column=3)
-        self.stepX_sv.set('1')
+        self.stepX_sv.set('500')
 
         label = ttk.Label(self.frame, text='Step Y(µm)')
         label.grid(row=0, column=4)
@@ -131,7 +133,7 @@ class XYStage(Device):
         e = ttk.Entry(self.frame, textvariable=self.stepY_sv, justify=tk.CENTER, width=7)
         e.bind('<Return>', lambda e: self.get_GUI_params())
         e.grid(row=0, column=5)
-        self.stepY_sv.set('1')
+        self.stepY_sv.set('500')
 
         label = ttk.Label(self.frame, text='Speed X(µm/s)')
         label.grid(row=1, column=2)
@@ -168,6 +170,9 @@ class XYStage(Device):
 
         self.labelLED_ignored = ttk.Label(self.frame, image=self.tkimageLEDGreenOff)
         self.labelLED_ignored.grid(row=3, column=1)
+
+        b = tk.Button(self.frame, text="STOP !", command=self.stop_cmd)
+        b.grid(row=3, column = 3)
 
         self.frameNavigationGraph= tk.Frame(self.frame)
         self.frameNavigationGraph.grid(row=0, column=6, rowspan=3)
@@ -213,6 +218,9 @@ class XYStage(Device):
 
     def pos_Selected(self):
         pass
+
+    def stop_cmd(self):
+        self.stop()
 
     def insert_line_in_pos_TreeView(self, label, posX, posY):
         iid = self.pos_tree_view.insert(parent="", index='end', text=label, value=(str(posX), str(posY)))
@@ -265,14 +273,30 @@ class XYStage(Device):
     def wait_for_device(self):
         pass
 
+    def double_step(self):
+        self.get_GUI_params()
+        self.stepX_sv.set(str(self.step[0] * 2))
+        self.stepY_sv.set(str(self.step[1] * 2))
+        self.get_GUI_params()
+
+    def halve_step(self):
+        self.get_GUI_params()
+        self.stepX_sv.set(str(self.step[0] / 2))
+        self.stepY_sv.set(str(self.step[1] / 2))
+        self.get_GUI_params()
+
     def move_up(self):
-        self.launch_move(mode="relative", posMicron=[0, self.step[1]])
+        if self.is_rotate_XY == 0:
+            self.launch_move(mode="relative", posMicron=[0, self.step[1]])
     def move_down(self):
-        self.launch_move(mode="relative", posMicron=[0, -self.step[1]])
+        if self.is_rotate_XY == 0:
+            self.launch_move(mode="relative", posMicron=[0, -self.step[1]])
     def move_left(self):
-        self.launch_move(mode="relative", posMicron=[-self.step[0], 0])
+        if self.is_rotate_XY == 0:
+            self.launch_move(mode="relative", posMicron=[-self.step[0], 0])
     def move_right(self):
-        self.launch_move(mode="relative", posMicron=[self.step[1], 0])
+        if self.is_rotate_XY == 0:
+            self.launch_move(mode="relative", posMicron=[self.step[1], 0])
 
     def get_position(self):
         pass

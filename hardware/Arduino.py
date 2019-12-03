@@ -11,6 +11,7 @@ class Arduino(Device):
         # self.threadPoll = threading.Thread(name='arduinoPoll', target=self.read_from_port)
         # self.threadPoll.setDaemon(True)
         self.comPortInfo = ["", "", ""]
+        self.serial_number = None
 
     def load_device(self, params=None):
         #self.detectSerialPort(idString)
@@ -57,11 +58,11 @@ class Arduino(Device):
            if response == answerToDetect:
                return
 
-    def detect_serial_COM_port_via_serial_number(self, serialNumber):
+    def detect_serial_COM_port_via_serial_number(self, serial_number):
         self.comPortInfo =  None
         listSerialPort = comports()
         for port in listSerialPort:
-            if serialNumber in port[3]:
+            if serial_number in port[3]:
                 return port[0]
 
 

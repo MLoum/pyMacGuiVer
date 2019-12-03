@@ -22,7 +22,7 @@ class MidiListener():
         self.macGuiver = macGuiver
         self.master = macGuiver.root
         self.isMidiListening = False
-        self.listControlToMonitor = []
+        self.list_control_to_monitor = []
         self.midiInspectDelay = 0.05  # ms
 
         # WARNING This code does not take in account midi channel. Consquently, only 127 control can be used simultaneouslly.
@@ -50,7 +50,7 @@ class MidiListener():
         #print 'FIN MIDI'
 
     def add_a_Control(self, tkVariable, min_, max_, midiCC, midiCC_inc, callBack=None):
-        self.listControlToMonitor.append(MidiTkControl(tkVariable, min_, max_, midiCC, midiCC_inc, callBack))
+        self.list_control_to_monitor.append(MidiTkControl(tkVariable, min_, max_, midiCC, midiCC_inc, callBack))
 
     def midiLoop(self):
         while self.isMidiListening == True:
@@ -90,14 +90,14 @@ class MidiListener():
             lastEvent = midi[-1]
             CCname = lastEvent[0][1]
             #print (CCname)
-            for control in self.listControlToMonitor:
+            for control in self.list_control_to_monitor:
                 if control.modifyMidiCC == CCname:
                     control.midiValue = lastEvent[0][2]
                     self.setGuiforIncomingMidi(control.name)
                     control.act()
 
     def registerCallback(self, type="relative", name="", tkVariable=None, min_=0, max_=0, inc=1, midiChannel=1, midiCC=0, callBack=None):
-        self.listControlToMonitor.append(MidiTkControl(type, name, tkVariable, min_, max_, inc, midiChannel, midiCC, callBack))
+        self.list_control_to_monitor.append(MidiTkControl(type, name, tkVariable, min_, max_, inc, midiChannel, midiCC, callBack))
 
     def _print_device_info(self):
         for i in range(pygame.midi.get_count()):
@@ -155,6 +155,9 @@ class MidiListener():
 
 
 class MidiTkControl():
+    """
+    Fait un mapping entre une valeur et une donnée midi. tkVariable permet de relier au GUI
+    """
     def __init__(self, type="relative", name="", tkVariable=None, min_=0, max_=0, inc=1, midiChannel=1, midiCC=0, callBack=None):
         self.modifyMidiCC = midiCC
         self.inc = inc
