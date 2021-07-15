@@ -46,8 +46,10 @@ class XYScanner(Device):
             return False
 
     def create_GUI(self):
-        self.frame = tk.LabelFrame(self.master, text=self.frameName,
-                                         borderwidth=1)
+        # self.frame = tk.LabelFrame(self.master, text=self.frameName,
+        #                                  borderwidth=1)
+        # self.frame = tk.Toplevel(self.master)
+        # self.frame.title("XY_scanner")
 
         self.frame_cmd = tk.Frame(self.frame)
         self.frame_cmd.pack(fill='both', expand=1)
@@ -119,6 +121,10 @@ class XYScanner(Device):
         e = ttk.Entry(self.frame_cmd, textvariable=self.integration_time_sv, justify=tk.CENTER, width=7)
         e.grid(row=3, column=1)
         self.integration_time_sv.set("100")
+
+        self.current_value_photon_sv = tk.StringVar()
+        e = ttk.Entry(self.frame_cmd, textvariable=self.current_value_photon_sv, justify=tk.CENTER, width=7)
+        e.grid(row=3, column=2)
 
         tk.Button(self.frame_cmd, text="Save Image", command=self.save_scan_image).grid(row=3, column=2)
 
@@ -197,6 +203,8 @@ class XYScanner(Device):
         if result:
             fname = result
             self.figure.savefig(fname)
+            im = Image.fromarray(self.scan_data)
+            im.save(fname)
 
     def graph_button_press_event(self, event):
         # print('you pressed', event.button, event.xdata, event.ydata)
@@ -225,15 +233,12 @@ class XYScanner(Device):
 
     def scan(self):
         self.stop_scan = False
-
-        #TODO Thread for the scan.
-
         #TODO set integration time.
 
         self.scan_data = np.zeros((self.nb_step_x, self.nb_step_y))
 
         # Move to start position
-        # self.xyStage.move(mode="absolute", posMicron=[self.start_x, self.start_y])
+        self.xyStage.move(mode="absolute", posMicron=[self.start_x, self.start_y])
 
         direction = 1
         for y in range(self.nb_step_y):
@@ -245,10 +250,12 @@ class XYScanner(Device):
                     break
                 # move
                 # Count is a blocking process
-                if direction == 1 :
-                    self.scan_data[y, x] = self.counter.count()
+                nb_photon = self.counter.count()
+                self.current_value_photon_sv.set(str(nb_photon))
+                if direction == 1:
+                    self.scan_data[y, x] = nb_photon
                 else:
-                    self.scan_data[y, self.nb_step_x - 1 - x] = self.counter.count()
+                    self.scan_data[y, self.nb_step_x - 1 - x] = nb_photon
 
                 self.xyStage.move(mode="relative", posMicron=[self.step_size * direction, 0])
                 self.xyStage.wait_for_device()

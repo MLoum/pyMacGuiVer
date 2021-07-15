@@ -5,6 +5,7 @@ from serial.tools.list_ports import comports
 
 class Arduino(Device):
     def __init__(self, mac_guiver, frameName="Arduino", mm_name=""):
+        self.tag_label = "Arduino"
         super(Arduino, self).__init__(mac_guiver, frameName, mm_name)
         self.comPortInfo = None
         self.serialPort = serial.Serial(port=None, baudrate=57600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=0.5, rtscts=False)
@@ -40,12 +41,13 @@ class Arduino(Device):
 
 
     def read_result(self):
-        msg = "timeout"
-        msg = self.serialPort.readline()
-        return msg
+        self.answer = "timeout"
+        self.answer = self.serialPort.readline()
+        return self.answer
 
-    def pollArduino(self):
-        pass
+    def poll_arduino_for_answer(self):
+        self.thread_poll = threading.Thread(name='arduino poll', target=self.read_result)
+        self.thread_poll.start()
 
     def detect_serial_port(self, answerToDetect):
         self.comPortInfo =  None
@@ -54,7 +56,7 @@ class Arduino(Device):
            self.serialPort = serial.Serial(port=port[0], baudrate=57600, parity=serial.PARITY_NONE,
                                             stopbits=serial.STOPBITS_ONE, timeout=0.5, rtscts=False)
            self.send_command("?/")
-           response = self.pollArduino()
+           response = self.poll_arduino_for_answer()
            if response == answerToDetect:
                return
 

@@ -23,19 +23,26 @@ import time
 
 class ArduinoCouting(Arduino):
     def __init__(self, mac_guiver, frameName="Arduino Counting", mm_name=""):
+        self.tag_label = "Arduino Counting"
         super(ArduinoCouting, self).__init__(mac_guiver, frameName="Counting Arduino", mm_name="")
         self.threadMonitor = threading.Thread(name='arduinoCountingMonitor', target=self.monitor)
         self.threadMonitor.setDaemon(True)
         self.isMonitor = False
 
+
+
+
+
         # FIXME
-        self.change_com_port("COM11")
+        self.change_com_port("COM4")
         self.initialized = self.load_device()
         if self.initialized == False:
             return
         self.mac_guiver.write_to_splash_screen("Opened with port %s" % (str(self.comPortInfo[0])))
 
         self.create_GUI()
+        self.change_nb_of_point_in_history(150)
+        self.change_integration_time(100)
 
     def load_device(self, params=None):
         self.mac_guiver.write_to_splash_screen("Loading Arduino Counting")
@@ -46,19 +53,30 @@ class ArduinoCouting(Arduino):
                                    borderwidth=1)
 
         img = Image.open("./Ressource/OffSmall.png")
-        self.tkimageOff = ImageTk.PhotoImage(img)
+        resized = img.resize((70, 70), Image.ANTIALIAS)
+        self.tkimageOff = ImageTk.PhotoImage(resized)
         img = Image.open("./Ressource/OnSmall.png")
-        self.tkimageOn = ImageTk.PhotoImage(img)
+        resized = img.resize((70, 70), Image.ANTIALIAS)
+        self.tkimageOn = ImageTk.PhotoImage(resized)
+
+
 
         self.lbOnOff = ttk.Label(self.frame, image=self.tkimageOff)
-        #self.lbOnOff.config(width="40", height="40")
+        # self.lbOnOff.config(width="40", height="40")
         self.lbOnOff.bind('<Button-1>', lambda e: self.on_button_on_off())
         self.lbOnOff.grid(row=0, column=0)
 
-        label = ttk.Label(self.frame, text='Int. Time (ms)')
+        # l = ttk.Label(self.frame, text="value", justify=tk.CENTER, width=7)
+        # l.grid(row=0, column=2)
+        self.current_value_sv = tk.StringVar()
+        e = ttk.Entry(self.frame, textvariable=self.current_value_sv, justify=tk.CENTER, width=7, font='Courier 65 bold')
+        e.configure(state='readonly')
+        e.grid(row=0, column=3)
+
+        label = ttk.Label(self.frame, text='Int. Time (ms)', font='Courier 12')
         label.grid(row=1, column=0)
         self.intTime_sv = tk.StringVar()
-        e = ttk.Entry(self.frame, textvariable=self.intTime_sv, justify=tk.CENTER, width=7)
+        e = ttk.Entry(self.frame, textvariable=self.intTime_sv, justify=tk.CENTER, width=7, font='Courier 15 bold')
         e.bind('<Return>', lambda e: self.change_integration_time_callback())
         e.grid(row=1, column=1)
         self.intTime_sv.set('100')
@@ -67,52 +85,53 @@ class ArduinoCouting(Arduino):
         label.grid(row=2, column=0)
         self.mean_sv = tk.StringVar()
         e = ttk.Entry(self.frame, textvariable=self.mean_sv, justify=tk.CENTER, width=7)
-        e.config(font=("Courier", 65))
         e.grid(row=2, column=1)
         self.mean_sv.set('0')
 
         label = ttk.Label(self.frame, text='Sigma')
-        label.grid(row=3, column=0)
+        label.grid(row=2, column=0)
         self.sigma_sv = tk.StringVar()
         e = ttk.Entry(self.frame, textvariable=self.sigma_sv, justify=tk.CENTER, width=7)
-        e.grid(row=3, column=1)
+        e.grid(row=2, column=1)
         self.sigma_sv.set('0')
 
         self.frameHistory = tk.Frame(self.frame)
-        self.frameHistory.grid(row=0, column=3, rowspan=3)
+        self.frameHistory.grid(row=1, column=3, rowspan=5)
 
-        self.figure = plt.Figure(figsize=(16, 6), dpi=60)
+        self.figure = plt.Figure(figsize=(22, 7), dpi=60)
         self.ax = self.figure.add_subplot(111)
 
-        self.change_nb_of_point_in_history(150)
+        self.ax.set_ylabel('time', fontsize=40)
+        self.ax.set_ylabel('Photons', fontsize=40)
+
+        self.ax.tick_params(axis='both', which='major', labelsize=40)
+        self.ax.tick_params(axis='both', which='minor', labelsize=16)
+
+        # self.change_nb_of_point_in_history(150)
 
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.frameHistory)
         self.canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
 
+
+        label = ttk.Label(self.frame, text='Serial cmd')
+        label.grid(row=3, column=0)
         self.send_command_entry_sv = tk.StringVar()
-        e = ttk.Entry(self.frame, textvariable=self.send_command_entry_sv, justify=tk.CENTER, width=7)
+        e = ttk.Entry(self.frame, textvariable=self.send_command_entry_sv, justify=tk.CENTER, width=20)
         e.bind('<Return>', lambda e: self.send_command_gui())
-        e.grid(row=0, column=4)
+        e.grid(row=3, column=1)
 
+        label = ttk.Label(self.frame, text='Serial Answer')
+        label.grid(row=4, column=0)
         self.serial_answer_sv = tk.StringVar()
-        e = ttk.Label(self.frame, textvariable=self.serial_answer_sv, justify=tk.CENTER, width=7)
-        e.grid(row=0, column=5)
-
-
-        l = ttk.Label(self.frame, text="value", justify=tk.CENTER, width=7)
-        l.grid(row=1, column=4)
-
-        self.current_value_sv = tk.StringVar()
-        label = ttk.Label(self.frame, textvariable=self.current_value_sv, justify=tk.CENTER, width=7)
-        label.config(font=("Courier", 65))
-        label.grid(row=1, column=5)
+        e = ttk.Entry(self.frame, textvariable=self.serial_answer_sv, justify=tk.CENTER, width=20)
+        e.grid(row=4, column=1)
 
 
         b = tk.Button(self.frame, text="clear", command=self.clear_history)
-        b.grid(row=0, column = 5)
+        b.grid(row=5, column = 0)
 
         b = tk.Button(self.frame, text="Toggle LED", command=self.toggle_led)
-        b.grid(row=0, column = 6)
+        b.grid(row=5, column = 1)
 
         # self.figure.canvas.mpl_connect('scroll_event', self.graphScrollEvent)
         # self.figure.canvas.mpl_connect('button_press_event', self.graph_button_press_event)

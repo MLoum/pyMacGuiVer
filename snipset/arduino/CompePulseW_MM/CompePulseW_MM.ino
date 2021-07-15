@@ -82,8 +82,8 @@ void readCounter()
     cntVal = TCNT1 + overflow_*MAX_16BIT_TIMER;
     overflow_ = 0;
     TCNT1 = 0;
-    Serial.print(cntVal);
-    Serial.print('/');
+    Serial.println(cntVal);
+    //Serial.print('/');
     endOfMeasurement();
 
 }
@@ -105,7 +105,7 @@ void sendCurrentValue()
 {
   
   Serial.println(cntVal);
-  Serial.print('/');
+  //Serial.print('/');
 }
 
 void toggleLaserAlignFibre()

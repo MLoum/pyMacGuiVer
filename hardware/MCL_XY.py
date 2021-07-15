@@ -43,6 +43,14 @@ class madLibCity_XY(XYStage):
     def __init__(self, mac_guiver, serial_number=None):
         self.handle = None
         self.serial_number = serial_number
+
+        self.full_step_size_microns = 0
+        self.micro_step_size_microns = 0
+        self.encoder_resolution = 0
+        self.max_velocity = 0
+        self.max_velocity_two_axis = 0
+        self.max_velocity_three_axis = 0
+        self.min_velocity = 0
         super(madLibCity_XY, self).__init__(mac_guiver, frameName="MCL_XY", mm_name="MadLabXY")
 
     def load_device(self):
@@ -154,6 +162,19 @@ class madLibCity_XY(XYStage):
                                                       ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
                                                       ctypes.c_int]
 
+        self.mcl_lib.MCL_MDMoveThreeAxes.argtypes = [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
+                                                      ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
+                                                      ctypes.c_int]
+
+        #         int MCL_MDCurrentPositionM(unsigned int axis, int * microSteps, int  handle)
+        self.mcl_lib.MCL_MDCurrentPositionM.argtypes = [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
+                                                      ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int,
+                                                      ctypes.c_int]
+
+        """
+        int MCL_MDCurrentPositionM(unsigned int axis, int *microSteps, int handle)
+        """
+        self.mcl_lib.MCL_MDCurrentPositionM.argtypes = [ctypes.c_uint, ctypes.POINTER(ctypes.c_int), ctypes.c_int]
 
         """
         int MCL_GetFullStepSize(double *stepSize, int handle)
@@ -167,8 +188,61 @@ class madLibCity_XY(XYStage):
         Return Value:
         Returns MCL_SUCCESS or the appropriate error code.
         """
+        self.mcl_lib.MCL_GetFullStepSize.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+
+        """
+        int MCL_MDInformation(
+		double* encoderResolution,
+		double* stepSize,
+		double* maxVelocity,
+		double* maxVelocityTwoAxis,
+		double* maxVelocityThreeAxis,
+		double* minVelocity,
+		int handle)
+		
+        Gather Information about the resolution and speed of the Micro-Drive.
+        
+        Parameters:
+        encoderResolution	[IN/OUT]  Set to the encoder resolution in um.
+        stepSize		  	[IN/OUT]  Set to the size of a single step in mm.
+        maxVelocity		[IN/OUT]  Set to the maximum velocity in mm of a single axis move.
+        maxVelocityTwoAxis	[IN/OUT]  Set to the maximum velocity in mm of a two axis move.
+        maxVelocityThreeAxis	[IN/OUT]  Set to the maximum velocity in mm of a three axis move.
+        minVelocity		[IN/OUT]  Set to the minimum velocity in mm of a move.
+        handle			[IN]	Specifies which Micro-Drive to communicate with.
+        
+        Return Value:
+        Returns MCL_SUCCESS or the appropriate error code.
+        """
+        self.mcl_lib.MCL_MDInformation.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+
+        self.get_info()
+
+
 
         return True
+
+    def get_info(self):
+        full_step_size_mm = ctypes.c_double(float(self.full_step_size_microns))
+        encoder_resolution = ctypes.c_double(float(self.encoder_resolution))
+        micro_step_size_mm = ctypes.c_double(float(self.micro_step_size_microns))
+        max_velocity = ctypes.c_double(float(self.max_velocity))
+        max_velocity_two_axis = ctypes.c_double(float(self.max_velocity_two_axis))
+        max_velocity_three_axis = ctypes.c_double(float(self.max_velocity_three_axis))
+        min_velocity = ctypes.c_double(float(self.min_velocity))
+
+        # Get information on step size and microstep size.
+        self.mcl_lib.MCL_GetFullStepSize(ctypes.byref(full_step_size_mm), self.handle)
+        self.mcl_lib.MCL_MDInformation(ctypes.byref(encoder_resolution), ctypes.byref(micro_step_size_mm), ctypes.byref(max_velocity), ctypes.byref(max_velocity_two_axis),  ctypes.byref(max_velocity_three_axis), ctypes.byref(min_velocity), self.handle)
+
+        self.full_step_size_microns = full_step_size_mm.value * 1000
+        self.encoder_resolution = encoder_resolution.value
+        self.micro_step_size_microns = micro_step_size_mm.value * 1000
+        self.max_velocity = max_velocity.value
+        self.max_velocity_two_axis = max_velocity_two_axis.value
+        self.max_velocity_three_axis = max_velocity_three_axis.value
+        self.min_velocity = min_velocity.value
+
 
     def move_absolute(self, pos_micron):
         # self.mmc.setXYPosition(self.mm_name, self.posMicron[0], self.posMicron[1])
@@ -181,7 +255,7 @@ class madLibCity_XY(XYStage):
         :param pos_micron:
         :return:
         """
-        result = self.mcl_lib.MCL_MDMove(1, self.speed, pos_micron[0]/1000.0, 2, self.speed, pos_micron[1]/1000.0, 0, 0, 0, self.handle)
+        result = self.mcl_lib.MCL_MDMoveThreeAxes(1, self.speed[0] / 1000.0, pos_micron[0] / 1000.0, 0, 2, self.speed[1] / 1000.0, pos_micron[1] / 1000.0, 0, 0, 0, 0, 0, self.handle)
         return result
 
 
@@ -221,6 +295,24 @@ Care should be taken not to access the Micro-Drive while the microstage is movin
         """
         result = self.mcl_lib.MCL_MDMoveThreeAxesR(1, self.speed[0] / 1000.0, pos_micron[0] / 1000.0, 0, 2, self.speed[1] / 1000.0, pos_micron[1] / 1000.0, 0, 0, 0, 0, 0, self.handle)
         return result
+
+    def get_position(self):
+        """
+        int MCL_MDCurrentPositionM(unsigned int axis, int *microSteps, int handle)
+        Reads the number of microsteps taken since the beginning of the program.
+        :return:
+        """
+        microSteps_X = ctypes.c_int(0)
+        microSteps_Y = ctypes.c_int(0)
+
+        self.mcl_lib.MCL_MDCurrentPositionM(1, ctypes.byref(microSteps_X), self.handle)
+        self.mcl_lib.MCL_MDCurrentPositionM(2,  ctypes.byref(microSteps_Y), self.handle)
+
+        # FIXME
+        self.pos_abs_x_sv.set(str(microSteps_X.value * self.micro_step_size_microns))
+        self.pos_abs_y_sv.set(str(microSteps_Y.value * self.micro_step_size_microns))
+
+
 
     def wait_for_device(self):
         #TODO loop

@@ -26,7 +26,7 @@ class ArduinoPulser(Arduino):
         super(ArduinoPulser, self).__init__(mac_guiver, frameName="Counting Arduino", mm_name="")
 
         # FIXME
-        self.change_com_port("COM8")
+        self.change_com_port("COM4")
         self.initialized = self.load_device()
         if self.initialized == False:
             return

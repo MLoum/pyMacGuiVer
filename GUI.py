@@ -1,11 +1,14 @@
 from __future__ import print_function
 import Tkinter as tk
 import ttk
-from hardware import MCL_XY, Standa_XY, ArduinoCounting, ArduinoPulser, Spectro, dummy_XYStage, motorArduino, xy_scanner, OB1_MK3, fpga_nist
+from hardware import MCL_XY, Standa_XY, ArduinoCounting, ArduinoPulser, Spectro, dummy_XYStage, motorArduino, xy_scanner, OB1_MK3, fpga_nist, valveManager, FilterSlide
 from Control import midiControl, joystick
 from SplashScreen import SplashScreen
 from selectHardwareWindow import SelectHardwareWindow
+from config import Config
 # import MMCorePy
+from Menu import Menu
+from toolbox import ToolBoxMicroFLuidics
 
 import threading
 
@@ -42,14 +45,35 @@ class macGuiver():
         self.root = tk.Tk()
         # self.mmc = None
 
+        self.menu = Menu(self.root, self)
+
         self.is_hardware_loaded = False
 
+        self.hardware_label_dict = {
+            'MCL XY': MCL_XY.madLibCity_XY,
+            'Standa XY': Standa_XY.Standa_XY,
+            'Arduino Counting':  ArduinoCounting.ArduinoCouting,
+            'XY Scanner': xy_scanner.XYScanner,
+            'Joystick control': tk.IntVar(0),
+            'Elveflow OB1': tk.IntVar(0),
+            'Fianium (Work In progress)': tk.IntVar(0),
+            'Spectro (Work In progress)': Spectro.Spectro,
+            'Arduino Pulser': tk.IntVar(0),
+            'FPGA Nist': tk.IntVar(0),
+            'Thorlabs Filter Slider': tk.IntVar(0),
+            'Valve Manager': tk.IntVar(0),
+        }
+
+
+        self.config = Config()
         self.listHardware = []
         # As for now, we don't need micromanager anymore.
         # self.launch_MicroManager()
         self.splash_screen = None
         # self.start_splash_screen()
         # self.root.update()
+
+        self.save_dir = ""
 
         self.joystick_listener = None
         self.madLibCity_XY = None
@@ -132,67 +156,60 @@ class macGuiver():
 
 
     def create_hardware(self, hardware_selection):
-        # self.dummy_XYStage = dummy_XYStage.dummy_XY(self)
 
-        # self.madLibCity_XY  = MCL_XY.madLibCity_XY(self)
-        # if self.madLibCity_XY.initialized:
-        #     self.listHardware.append(self.madLibCity_XY)
-
-        if hardware_selection["MCL_XY"]:
+        if hardware_selection["MCL XY"].get() == 1:
             self.madLibCity_XY  = MCL_XY.madLibCity_XY(self)
             if self.madLibCity_XY.initialized:
                 self.listHardware.append(self.madLibCity_XY)
-        if hardware_selection["Standa_XY"]:
+        if hardware_selection["Standa XY"].get() == 1:
             self.standa_XY = Standa_XY.Standa_XY(self)
             if self.standa_XY.initialized:
                 self.listHardware.append(self.standa_XY)
-        if hardware_selection["Arduino_counting"]:
+        if hardware_selection["Arduino Counting"].get() == 1:
             self.countingArduino = ArduinoCounting.ArduinoCouting(self)
             if self.countingArduino.initialized:
                 self.listHardware.append(self.countingArduino)
-        if hardware_selection["Elveflow OB1"]:
+        if hardware_selection["Elveflow OB1"].get() == 1:
             self.ob1 = OB1_MK3.OB1MK3(self)
             if self.ob1.initialized:
                 self.listHardware.append(self.ob1)
-        if hardware_selection["Arduino_pulser"]:
+        if hardware_selection["Arduino Pulser"].get() == 1:
             self.arduino_pulser = ArduinoPulser.ArduinoPulser(self)
             if self.arduino_pulser.initialized:
                 self.listHardware.append(self.arduino_pulser)
-        if hardware_selection["FPGA Nist"]:
+        if hardware_selection["FPGA Nist"].get() == 1:
             self.fpga_nist = fpga_nist.FPGA_nist(self)
             if self.fpga_nist.initialized:
                 self.listHardware.append(self.fpga_nist)
-        # if hardware_selection["Thoralbs filter select"]:
-        #     self.arduino_pulser = ArduinoPulser.ArduinoPulser(self)
-        #     if self.arduino_pulser.initialized:
-        #         self.listHardware.append(self.arduino_pulser)
+        if hardware_selection["Valve Manager"].get() == 1:
+            self.valveManager = valveManager.ValveManager(self)
+            if self.valveManager.initialized:
+                self.listHardware.append(self.valveManager)
 
-        if hardware_selection["scan-arduino-standa"]:
-            #TODO Test if arduino and standa ?
-            # self.xy_scanner = xy_scanner.XYScanner(self, self.standa_XY, self.countingArduino)
-            # self.dummy_XY = dummy_XYStage.dummy_XY(self)
-            # self.dummy_counting = ArduinoCounting.dummy_counter(self)
-            # self.xy_scanner = xy_scanner.XYScanner(self, self.dummy_XY, self.dummy_counting)
+        if hardware_selection["Thorlabs Filter Slider"]:
+            pass
+            # self.filter_slide = FilterSlide.FilterSlide(self)
+            # if self.filter_slide.initialized:
+            #     self.listHardware.append(self.filter_slide)
+
+        if hardware_selection["XY Scanner"].get() == 1:
             if self.standa_XY.initialized and self.countingArduino.initialized:
                 self.xy_scanner = xy_scanner.XYScanner(self, self.standa_XY, self.countingArduino)
                 if self.xy_scanner.initialized:
                     self.listHardware.append(self.xy_scanner)
                     # self.listHardware.append(self.dummy_XY)
 
-        if hardware_selection["Spectro"]:
+        if hardware_selection["Spectro (Work In progress)"].get() == 1:
             self.spectro = Spectro.Spectro(self)
             self.listHardware.append(self.spectro)
 
-        if hardware_selection["Fianium"]:
-            pass
-        if hardware_selection["Spectro"]:
-            self.spectro = Spectro.Spectro(self)
-            self.listHardware.append(self.spectro)
+        # if hardware_selection["Fianium"].get() == 1:
+        #     pass
 
         # if hardware_selection["midi_crtl"]:
         #     self.create_midi_control()
 
-        if hardware_selection["joy_crtl"]:
+        if hardware_selection["Joystick control"].get() == 1:
             self.create_joystick_control()
             self.listHardware.append(self.joystick_listener)
 
@@ -254,6 +271,8 @@ class macGuiver():
             self.joystick_listener.registerCallback(type="axis", num=-2, name="MCL_right", callBack=self.madLibCity_XY.move_up)
 
 
+    def show_microfluidics_tool_box(self):
+        ToolBoxMicroFLuidics.ToolBoxMicrofluidics(self.root)
 
     def onQuit(self):
         # paramFile = open('param.ini', 'w')

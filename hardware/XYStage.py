@@ -7,11 +7,12 @@ import Tkinter as tk
 import tkMessageBox
 # from Tkinter import filedialog, messagebox, simpledialog, tkMessageBox
 import SimpleDialog
+import tkSimpleDialog
 
-class addListPointDialog(SimpleDialog.SimpleDialog):
+class AddListPointDialog(SimpleDialog.SimpleDialog):
     def __init__(self, master, title, pos):
         self.xy = pos
-        super(addListPointDialog, self).__init__(master, title)
+        super(AddListPointDialog, self).__init__(master, title)
 
     def body(self, master):
 
@@ -76,8 +77,8 @@ class XYStage(Device):
         self.step = [None, None]
         self.posHome = [0, 0]
 
-        self.posDict = {}
-        self.listPosTreeView_iid = []
+        self.pos_dict = {}
+        self.list_pos_tree_view_iid = []
 
         self.is_rotate_XY = 0
 
@@ -85,6 +86,7 @@ class XYStage(Device):
         if self.initialized:
             self.create_GUI()
             self.get_GUI_params()
+            self.get_position()
 
     def load_device(self, params=None):
         pass
@@ -172,7 +174,7 @@ class XYStage(Device):
         self.labelLED_ignored.grid(row=3, column=1)
 
         b = tk.Button(self.frame, text="STOP !", command=self.stop_cmd)
-        b.grid(row=3, column = 3)
+        b.grid(row=3, column=3)
 
         self.frameNavigationGraph= tk.Frame(self.frame)
         self.frameNavigationGraph.grid(row=0, column=6, rowspan=3)
@@ -191,6 +193,23 @@ class XYStage(Device):
         # self.figure.canvas.mpl_connect('motion_notify_event', self.motion_notify_event)
 
         self.plot_position_on_graph()
+
+
+        self.frame_abs_pos = tk.Frame(self.frame)
+        self.frame_abs_pos.grid(row=3, column=6)
+        label = ttk.Label(self.frame_abs_pos, text='X :')
+        label.grid(row=0, column=0)
+        self.pos_abs_x_sv = tk.StringVar()
+        e = ttk.Entry(self.frame_abs_pos, textvariable=self.pos_abs_x_sv, justify=tk.CENTER, width=7)
+        e.grid(row=0, column=1)
+        e.configure(state='readonly')
+        label = ttk.Label(self.frame_abs_pos, text='Y :')
+        label.grid(row=0, column=2)
+        self.pos_abs_y_sv = tk.StringVar()
+        e = ttk.Entry(self.frame_abs_pos, textvariable=self.pos_abs_y_sv, justify=tk.CENTER, width=7)
+        e.grid(row=0, column=3)
+        e.configure(state='readonly')
+
 
         #cursor =
         self.pos_tree_view = ttk.Treeview(self.frame, height=7, columns=('PosX', 'PosY'), selectmode="browse")
@@ -212,7 +231,7 @@ class XYStage(Device):
         b = tk.Button(self.frame_tool_button_pos, text="goTo", command=self.go_to_pos)
         b.grid(row=0, column=2)
         b = tk.Button(self.frame_tool_button_pos, text="SetHome", command=self.set_home)
-        b.grid(row=0, column=2)
+        b.grid(row=0, column=3)
 
         self.pos_tree_view.tag_bind('ttk', '<1>', self.pos_Selected)
 
@@ -224,13 +243,16 @@ class XYStage(Device):
 
     def insert_line_in_pos_TreeView(self, label, posX, posY):
         iid = self.pos_tree_view.insert(parent="", index='end', text=label, value=(str(posX), str(posY)))
-        self.posDict[iid] = [label, posX, posY]
+        self.pos_dict[iid] = [label, posX, posY]
 
     def add_pos(self):
-        d = addListPointDialog(self.master, title="New Position", pos=self.pos)
-        if d.result is not None:
-            x, y, name = d.result
-            self.insert_line_in_pos_TreeView(name, x, y)
+        # d = AddListPointDialog(self.master, title="New Position", pos=self.posMicron)
+        # if d.result is not None:
+        #     x, y, name = d.result
+        #     self.insert_line_in_pos_TreeView(name, x, y)
+        result = tkSimpleDialog.askstring("New Position", "Label for the new position :")
+        if result is not None:
+            self.insert_line_in_pos_TreeView(result, self.posMicron[0], self.posMicron[1])
 
     def remove_pos(self):
         id_selected_item = self.pos_tree_view.focus()
@@ -241,8 +263,8 @@ class XYStage(Device):
     def go_to_pos(self):
         id_selected_item = self.pos_tree_view.focus()
         # selected_item = self.pos_tree_view.item(id_selected_item)
-        label, x, y = self.posDict[id_selected_item]
-        self.move(mode="absolute", posMicron=[x, y])
+        label, x, y = self.pos_dict[id_selected_item]
+        self.move(mode="absolute", posMicron=[float(x), float(y)])
 
     def set_home(self):
         pass
@@ -346,6 +368,7 @@ class XYStage(Device):
         self.wait_for_device()
         self.labelLEDMoving.configure(image=self.tkimageLEDGreenOff)
 
+        self.get_position()
         self.plot_position_on_graph()
 
     def stop(self):
