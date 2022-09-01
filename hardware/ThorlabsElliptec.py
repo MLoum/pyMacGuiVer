@@ -1,4 +1,4 @@
-from Device import Device
+from hardware.Device import Device
 import serial as s
 import serial.tools.list_ports as lp
 

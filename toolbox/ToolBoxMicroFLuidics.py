@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 import numpy as np
 import matplotlib.pyplot as plt

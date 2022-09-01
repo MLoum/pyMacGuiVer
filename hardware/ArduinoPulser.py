@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-from Device import Device
-from Arduino import Arduino
+from hardware.Device import Device
+from hardware.Arduino import Arduino
 import serial
 import threading
 from serial.tools.list_ports import comports
 
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 import matplotlib.pyplot as plt
@@ -22,11 +22,11 @@ import numpy as np
 import time
 
 class ArduinoPulser(Arduino):
-    def __init__(self, mac_guiver, frameName="Arduino Counting", mm_name=""):
+    def __init__(self, mac_guiver, frameName="Arduino Pulser", mm_name=""):
         super(ArduinoPulser, self).__init__(mac_guiver, frameName="Counting Arduino", mm_name="")
 
         # FIXME
-        self.change_com_port("COM4")
+        self.change_com_port("COM9")
         self.initialized = self.load_device()
         if self.initialized == False:
             return
@@ -35,7 +35,7 @@ class ArduinoPulser(Arduino):
         self.create_GUI()
 
     def load_device(self, params=None):
-        self.mac_guiver.write_to_splash_screen("Loading Arduino Counting")
+        self.mac_guiver.write_to_splash_screen("Loading Arduino Pulser")
         return super(ArduinoPulser, self).load_device("counter/\r\n")
 
     def create_GUI(self):
@@ -76,9 +76,14 @@ class ArduinoPulser(Arduino):
 
         tk.Button(self.frame, text="Pulse", command=self.start_pulse).grid(row=0, column=9)
         tk.Button(self.frame, text="Stop", command=self.stop_pulse).grid(row=0, column=10)
+        tk.Button(self.frame, text="Always ON", command=self.always_on).grid(row=0, column=11)
+        tk.Button(self.frame, text="Always OFF", command=self.always_off).grid(row=0, column=12)
+        tk.Button(self.frame, text="Gate ON", command=self.gate_on).grid(row=0, column=13)
+        tk.Button(self.frame, text="Gate OFF", command=self.gate_off).grid(row=0, column=14)
+
 
         self.label_LED_pulsing = ttk.Label(self.frame, image=self.tkimageLEDRedOff)
-        self.label_LED_pulsing.grid(row=0, column=11)
+        self.label_LED_pulsing.grid(row=0, column=13)
 
     def connect(self):
         self.change_com_port(self.comPort_sv.get())
@@ -130,6 +135,23 @@ class ArduinoPulser(Arduino):
     def stop_pulse(self):
         self.send_command("s/")
         self.label_LED_pulsing.configure(image=self.tkimageLEDRedOff)
+
+    def always_on(self):
+        self.stop_pulse()
+        self.send_command("O/")
+
+    def always_off(self):
+        self.stop_pulse()
+        self.send_command("F/")
+
+    def gate_on(self):
+        self.stop_pulse()
+        self.send_command("k/")
+
+    def gate_off(self):
+        self.stop_pulse()
+        self.send_command("l/")
+
 
 
 

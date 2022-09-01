@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-from Device import Device
-from Arduino import Arduino
+from hardware.Device import Device
+from hardware.Arduino import Arduino
 import serial
 import threading
 from serial.tools.list_ports import comports
 
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ class ArduinoCouting(Arduino):
 
 
         # FIXME
-        self.change_com_port("COM4")
+        self.change_com_port("COM10")
         self.initialized = self.load_device()
         if self.initialized == False:
             return

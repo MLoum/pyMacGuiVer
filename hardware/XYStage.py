@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-from Device import Device
+from hardware.Device import Device
 
-import Tkinter as tk
-import tkMessageBox
-# from Tkinter import filedialog, messagebox, simpledialog, tkMessageBox
-import SimpleDialog
-import tkSimpleDialog
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog, messagebox, simpledialog
 
-class AddListPointDialog(SimpleDialog.SimpleDialog):
+class AddListPointDialog(simpledialog.Dialog):
     def __init__(self, master, title, pos):
         self.xy = pos
         super(AddListPointDialog, self).__init__(master, title)
@@ -43,7 +41,7 @@ class AddListPointDialog(SimpleDialog.SimpleDialog):
             third = str(self.e3.get())
             self.result = first, second, third
         except ValueError:
-            tkMessageBox.showwarning(
+            messagebox.showwarning(
                 "Bad input",
                 "Illegal values, please try again"
             )
@@ -52,7 +50,7 @@ class AddListPointDialog(SimpleDialog.SimpleDialog):
     # def apply(self):
 
 
-import ttk
+
 from PIL import Image, ImageTk
 
 import threading
@@ -143,7 +141,7 @@ class XYStage(Device):
         e = ttk.Entry(self.frame, textvariable=self.speedX_sv, justify=tk.CENTER, width=7)
         e.bind('<Return>', lambda e: self.get_GUI_params())
         e.grid(row=1, column=3)
-        self.speedX_sv.set('500')
+        self.speedX_sv.set('1000')
 
         label = ttk.Label(self.frame, text='Speed Y(µm/s)')
         label.grid(row=1, column=4)
@@ -151,7 +149,7 @@ class XYStage(Device):
         e = ttk.Entry(self.frame, textvariable=self.speedY_sv, justify=tk.CENTER, width=7)
         e.bind('<Return>', lambda e: self.get_GUI_params())
         e.grid(row=1, column=5)
-        self.speedY_sv.set('500')
+        self.speedY_sv.set('1000')
 
         img = Image.open("./Ressource/led-green-off.png")
         self.tkimageLEDGreenOff = ImageTk.PhotoImage(img)
@@ -250,7 +248,7 @@ class XYStage(Device):
         # if d.result is not None:
         #     x, y, name = d.result
         #     self.insert_line_in_pos_TreeView(name, x, y)
-        result = tkSimpleDialog.askstring("New Position", "Label for the new position :")
+        result = simpledialog.askstring("New Position", "Label for the new position :")
         if result is not None:
             self.insert_line_in_pos_TreeView(result, self.posMicron[0], self.posMicron[1])
 

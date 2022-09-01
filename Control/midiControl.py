@@ -7,9 +7,8 @@ Created on Thu Jan 03 14:21:34 2013
 
 import pygame.midi
 import sys
-import Tkinter as tk
-
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 import threading

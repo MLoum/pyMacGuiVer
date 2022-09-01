@@ -1,11 +1,11 @@
 # coding: utf-8
-from Device import Device
+from hardware.Device import Device
 import ctypes
 import os, sys
 import threading
-import Tkinter as tk
-import tkFileDialog
-import ttk
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog
 import time
 from PIL import Image, ImageTk
 
@@ -250,7 +250,7 @@ class FPGA_nist(Device):
     def select_time_tag_file(self):
         #TODO initial file
         # file_path = filedialog.asksaveasfile(title="ttt file name ?", initialdir=self.mac_guiver.save_dir, initialfile=initialfile)
-        file_path = tkFileDialog.asksaveasfile(title="ttt file name ?", initialdir=self.mac_guiver.save_dir)
+        file_path = filedialog.asksaveasfile(title="ttt file name ?", initialdir=self.mac_guiver.save_dir)
         if file_path == None or file_path.name == '':
             return None
         else:

@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-from Device import Device
-from ThorlabsElliptec import ThorlabsElliptec
+from hardware.Device import Device
+from hardware.ThorlabsElliptec import ThorlabsElliptec
 
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 
-# from Tkinter import simpledialog
-import tkSimpleDialog as simpledialog
+from tkinter import simpledialog
 
 class FilterSlide(Device):
 
@@ -52,6 +51,7 @@ class FilterSlide(Device):
 
         self.button_sv = [tk.StringVar()]*self.nb_of_optical_filter
         self.fill_button_name_from_ini()
+
         def create_button(frame, number):
             b = tk.Button(frame, textvariable=self.button_sv[number], command=lambda: self.move_slider_up(number))
             b.grid(row=0, column=number)

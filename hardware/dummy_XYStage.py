@@ -3,7 +3,7 @@
 
 import time
 
-from XYStage import XYStage
+from hardware.XYStage import XYStage
 
 class dummy_XY(XYStage):
     def __init__(self, mac_guiver):

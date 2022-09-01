@@ -1,7 +1,8 @@
 import pygame
-import Tkinter as tk
+
 from pygame.locals import *
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 import threading
@@ -42,7 +43,7 @@ class JoystickListener():
 
     def update_joy_status(self):
         for e in pygame.event.get():  # iterate over event stack
-            print 'event : ' + str(e.type)
+            print ('event : ' + str(e.type))
             if e.type == JOYAXISMOTION:  # 7
                 for ctrl in self.list_control_to_monitor:
                     if ctrl.type == "axis":
@@ -70,10 +71,10 @@ class JoystickListener():
 
 
             elif e.type == JOYBALLMOTION:  # 8
-                print 'ball motion'
+                print ('ball motion')
             elif e.type == JOYHATMOTION:  # 9
                 # x,y = self.joystick.get_hat(0)
-                print 'hat motion'
+                print ('hat motion')
             elif e.type == JOYBUTTONDOWN:  # 10
 
                 for ctrl in self.list_control_to_monitor:
@@ -83,7 +84,7 @@ class JoystickListener():
                             ctrl.callback()
 
             elif e.type == JOYBUTTONUP:  # 11
-                print 'button up'
+                print ('button up')
 
     def print_info_joystick(self):
         if self.joystick is not None:

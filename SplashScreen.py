@@ -1,6 +1,5 @@
-import Tkinter as tk
-import ttk
-
+import tkinter as tk
+from tkinter import ttk
 
 class SplashScreen():
 

@@ -1,6 +1,6 @@
 from __future__ import print_function
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 from hardware import MCL_XY, Standa_XY, ArduinoCounting, ArduinoPulser, Spectro, dummy_XYStage, motorArduino, xy_scanner, OB1_MK3, fpga_nist, valveManager, FilterSlide
 from Control import midiControl, joystick
 from SplashScreen import SplashScreen

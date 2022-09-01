@@ -1,9 +1,9 @@
-from Device import Device
+from hardware.Device import Device
 import serial
 import threading
 from serial.tools.list_ports import comports
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 import time
 from PIL import Image, ImageTk
 

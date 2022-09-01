@@ -4,8 +4,7 @@
 import time
 import serial
 from serial.tools.list_ports import comports
-
-from XYStage import XYStage
+from hardware.Device import Device
 
 class Fianium(Device):
     def __init__(self, macGuiver):

@@ -14,7 +14,7 @@ if sys.version_info >= (3, 0):
     import urllib.parse
 
 
-from RotationStage import RotationStage
+from hardware.RotationStage import RotationStage
 
 from standa.pyximc import *
 

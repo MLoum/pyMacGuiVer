@@ -1,10 +1,11 @@
 # coding=utf-8
-from Device import Device
+from hardware.Device import Device
 import threading, time
 import os, sys
 import ctypes
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
+# from tkinter import filedialog, messagebox, simpledialog
 from hardware.ElveFlow import Elveflow64
 
 class OB1MK3(Device):

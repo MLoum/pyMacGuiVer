@@ -3,10 +3,10 @@
 
 from Device import Device
 
-import Tkinter as tk
-import tkMessageBox
-# from Tkinter import filedialog, messagebox, simpledialog, tkMessageBox
-import SimpleDialog
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox, simpledialog
+
 
 # class addListPointDialog(SimpleDialog.SimpleDialog):
 #     def __init__(self, master, title, pos):
@@ -51,7 +51,7 @@ import SimpleDialog
 #     # def apply(self):
 
 
-import ttk
+
 from PIL import Image, ImageTk
 
 import threading

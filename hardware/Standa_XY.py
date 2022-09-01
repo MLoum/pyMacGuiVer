@@ -14,9 +14,9 @@ if sys.version_info >= (3, 0):
     import urllib.parse
 
 
-from XYStage import XYStage
+from hardware.XYStage import XYStage
 
-from standa.pyximc import *
+from hardware.standa.pyximc import *
 
 class Standa_XY(XYStage):
     def __init__(self, mac_guiver):

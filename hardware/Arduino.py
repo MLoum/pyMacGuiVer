@@ -1,4 +1,4 @@
-from Device import Device
+from hardware.Device import Device
 import serial
 import threading
 from serial.tools.list_ports import comports

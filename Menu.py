@@ -1,5 +1,5 @@
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 
 #https://stackoverflow.com/questions/673174/file-dialogs-of-tkinter-in-python-3
 # from tkinter import filedialog, messagebox, simpledialog

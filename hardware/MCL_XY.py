@@ -3,7 +3,7 @@
 
 
 
-from XYStage import XYStage
+from hardware.XYStage import XYStage
 
 import ctypes
 import atexit

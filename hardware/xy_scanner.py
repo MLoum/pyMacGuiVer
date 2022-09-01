@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-from Device import Device
+from hardware.Device import Device
 
-import Tkinter as tk
-import tkMessageBox
-import tkFileDialog
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog, messagebox
 
 
-import ttk
+
 from PIL import Image, ImageTk
 
 import threading
@@ -150,6 +150,7 @@ class XYScanner(Device):
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.frame_canvas)
         self.canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
 
+
         # self.figure.canvas.mpl_connect('scroll_event', self.graphScrollEvent)
         self.figure.canvas.mpl_connect('button_press_event', self.graph_button_press_event)
         # self.figure.canvas.mpl_connect('button_release_event', self.button_release_event)
@@ -199,7 +200,7 @@ class XYScanner(Device):
         self.stop_scan = True
 
     def save_scan_image(self):
-        result = tkFileDialog.asksaveasfilename(title="File name for image")
+        result = filedialog.asksaveasfilename(title="File name for image")
         if result:
             fname = result
             self.figure.savefig(fname)
@@ -211,7 +212,7 @@ class XYScanner(Device):
         x_pos = event.xdata * self.step_size
         y_pos = event.ydata * self.step_size
         if event.dblclick:
-            result = tkMessageBox.askyesno("Python", "Would you like to move to x=%f, y=%f" % (x_pos, y_pos))
+            result = messagebox.askyesno("Python", "Would you like to move to x=%f, y=%f" % (x_pos, y_pos))
             if result:
                 self.xyStage.move_absolute([x_pos, y_pos])
 
